@@ -5,11 +5,12 @@ const headers = {
   multipartFormData: 'multipart/form-data',
 };
 
-const get = async (url, responseType) => {
+const get = async (url, responseType, header = {}) => {
   return apiRequest({
     method: 'GET',
     url,
     responseType,
+    headers: header,
   })
     .then((res) => {
       const { code } = res;

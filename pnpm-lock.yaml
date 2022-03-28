@@ -47,6 +47,8 @@ specifiers:
   eslint-plugin-react: ^7.26.1
   eslint-plugin-react-hooks: ^4.2.0
   eslint-plugin-unused-imports: ^1.1.5
+  filepond: ^4.30.3
+  filepond-plugin-image-preview: ^4.6.10
   firebase: 9.6.8
   framer-motion: 6.2.8
   history: 5.3.0
@@ -69,6 +71,7 @@ specifiers:
   react-autosuggest: 10.1.0
   react-dom: 17.0.2
   react-draft-wysiwyg: 1.14.7
+  react-filepond: ^7.1.1
   react-hook-form: 7.27.1
   react-i18next: 11.15.5
   react-icons: ^4.3.1
@@ -110,6 +113,8 @@ dependencies:
   date-fns: 2.28.0
   draft-js: 0.11.7_react-dom@17.0.2+react@17.0.2
   draftjs-to-html: 0.9.1
+  filepond: 4.30.3
+  filepond-plugin-image-preview: 4.6.10_filepond@4.30.3
   firebase: 9.6.8
   framer-motion: 6.2.8_react-dom@17.0.2+react@17.0.2
   history: 5.3.0
@@ -128,6 +133,7 @@ dependencies:
   react-autosuggest: 10.1.0_react@17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-draft-wysiwyg: 1.14.7_238eb5982f30a9897f3f19039e5e474f
+  react-filepond: 7.1.1_52e0bae0f66a08e23dff49ad2fd796b5
   react-hook-form: 7.27.1_react@17.0.2
   react-i18next: 11.15.5_8fd568e9c91be135c90675cf637af7c7
   react-icons: 4.3.1_react@17.0.2
@@ -7540,6 +7546,18 @@ packages:
     dependencies:
       minimatch: 3.1.2
 
+  /filepond-plugin-image-preview/4.6.10_filepond@4.30.3:
+    resolution: {integrity: sha512-C7Q5Sr/d4RQb2nMNQR93OiMt91OHxpvmIBGl+CO1dZE46lM49NUfI08dyElAOxTslDcA8pAfjFFCKo0sNYbrBg==}
+    peerDependencies:
+      filepond: '>=4.x <5.x'
+    dependencies:
+      filepond: 4.30.3
+    dev: false
+
+  /filepond/4.30.3:
+    resolution: {integrity: sha512-G2b1LEe90Sq2vH0SYDASTB+vVU735NBctzIaFPlZtb14QAgi/AL89WyQ6LhTfqgyrMyuZur2O9yHAmzS2E9ZnA==}
+    dev: false
+
   /filesize/8.0.7:
     resolution: {integrity: sha512-pjmC+bkIF8XI7fWaH8KxHcZL3DPybs1roSKP4rKDvy20tAWwIObE4+JIseG2byfGKhud5ZnM4YSGKBz7Sh0ndQ==}
     engines: {node: '>= 0.4.0'}
@@ -11106,6 +11124,18 @@ packages:
 
   /react-error-overlay/6.0.10:
     resolution: {integrity: sha512-mKR90fX7Pm5seCOfz8q9F+66VCc1PGsWSBxKbITjfKVQHMNF2zudxHnMdJiB1fRCb+XsbQV9sO9DCkgsMQgBIA==}
+    dev: false
+
+  /react-filepond/7.1.1_52e0bae0f66a08e23dff49ad2fd796b5:
+    resolution: {integrity: sha512-6Szyi3zY4AEiSlE5rztJov/xIDB107Sv31MctDoSutdLinMqmbMej6kJ2MtSGzAhsP2+h8cDDr51mdHNXt97Yw==}
+    peerDependencies:
+      filepond: '>=3.7.x < 5.x'
+      react: 16 - 18
+      react-dom: 16 - 18
+    dependencies:
+      filepond: 4.30.3
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /react-hook-form/7.27.1_react@17.0.2:

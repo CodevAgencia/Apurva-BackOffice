@@ -10,8 +10,8 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { setFilter } from '../../store/app/usuarioSlice';
 import { openDialog } from '../../store/fuse/dialogSlice';
+import { setFilterBlog } from '../../store/app/blogSlice';
 
 const useStyles = makeStyles((theme) => ({
   listItem: {
@@ -50,7 +50,7 @@ function UsuariosSidebarContent(props) {
   const dispatch = useDispatch();
 
   const handleSelectCategoryFilter = (id) => {
-    dispatch(setFilter(id));
+    dispatch(setFilterBlog(id));
   };
 
   return (

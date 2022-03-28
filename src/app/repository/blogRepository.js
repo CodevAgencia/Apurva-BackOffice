@@ -17,17 +17,15 @@ const blogRepository = {
   saveBlog: async (data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      // TODO: actualizar para llamar a la API
-      // return await http.post(`${crudBlogUrl}`, data);
-      return data;
+      return await http.post(`${crudBlogUrl}`, data);
     } catch (error) {
       throw error;
     }
   },
-  updateBlog: async (id) => {
+  updateBlog: async (id, data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      return await http.put(`${crudBlogUrl}/${id}`);
+      return await http.put(`${crudBlogUrl}/${id}`, data);
     } catch (error) {
       throw error;
     }
@@ -43,8 +41,8 @@ const blogRepository = {
   getCategoriesBlog: async () => {
     // eslint-disable-next-line no-useless-catch
     try {
-      // return await http.get(`${getCategoryBlogUrl}`);
-      return top100Films;
+      return await http.get(`${getCategoryBlogUrl}`, '', { 'Accept-Language': 'es' });
+      // return top100Films;
     } catch (error) {
       throw error;
     }

@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { withStyles } from '@mui/styles';
 import { red } from '@mui/material/colors';
 import {
+  Button,
   FormControlLabel,
   FormGroup,
   Switch,
@@ -22,6 +23,9 @@ import {
 } from '@mui/material';
 import BlogTableHead from './BlogTableHead';
 import { skyBlue } from '../../../@fuse/colors';
+import { TruncateString } from '../../utils/TruncateString';
+import { setInfoBlog, updateStateBlog } from '../../store/app/blogSlice';
+import { openDialog } from '../../store/fuse/dialogSlice';
 
 const rows = [
   {
@@ -119,7 +123,9 @@ function BlogTable({ blogs: dataBlogs }) {
   useEffect(() => {
     if (searchText.length !== 0) {
       setData(
-        _.filter(dataBlogs, (item) => item?.name?.toLowerCase().includes(searchText.toLowerCase()))
+        _.filter(dataBlogs, (item) =>
+          item?.title_es?.toLowerCase().includes(searchText.toLowerCase())
+        )
       );
       setPage(0);
     } else {
@@ -133,9 +139,6 @@ function BlogTable({ blogs: dataBlogs }) {
       filterCode === 1
         ? setData(_.filter(dataBlogs, (item) => item?.state === true))
         : setData(_.filter(dataBlogs, (item) => item?.state === false));
-      // setData(
-      //   _.filter(dataUsers, (item) => item?.name?.toLowerCase().includes(searchText.toLowerCase()))
-      // );
       setPage(0);
     } else {
       setData(dataBlogs);
@@ -196,7 +199,7 @@ function BlogTable({ blogs: dataBlogs }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.knowledge_category_id}
+                    {n?.category?.category || 'Sin categoría'}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
@@ -204,34 +207,24 @@ function BlogTable({ blogs: dataBlogs }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.description_es}
+                    {TruncateString(n?.description_es)}
                   </TableCell>
 
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.image}
+                  <TableCell
+                    className="p-4 md:p-16 truncate"
+                    style={{ width: '7em' }}
+                    component="th"
+                    scope="row"
+                  >
+                    <div className="w-full flex justify-center rounded-full overflow-hidden">
+                      <img
+                        // src={n.image || 'assets/images/avatars/ApurvaLogo.jpg'}
+                        src="assets/images/avatars/ApurvaLogo.jpg"
+                        alt="imagen"
+                        className="object-cover"
+                      />
+                    </div>
                   </TableCell>
-
-                  {/* <TableCell */}
-                  {/*  className="p-4 md:p-16 truncate" */}
-                  {/*  style={{ width: '7em' }} */}
-                  {/*  component="th" */}
-                  {/*  scope="row" */}
-                  {/* > */}
-                  {/*  <div className="w-full flex justify-center rounded-full overflow-hidden"> */}
-                  {/*    <img src={n.imagen} alt="imagen" /> */}
-                  {/*  </div> */}
-                  {/* </TableCell> */}
-
-                  {/* <TableCell */}
-                  {/*  className="p-4 md:p-16 truncate" */}
-                  {/*  style={{ width: '7em' }} */}
-                  {/*  component="th" */}
-                  {/*  scope="row" */}
-                  {/* > */}
-                  {/*  <div className="w-full flex justify-center rounded-full overflow-hidden"> */}
-                  {/*    <img src={n.video} alt="imagen" /> */}
-                  {/*  </div> */}
-                  {/* </TableCell> */}
 
                   <TableCell
                     className="p-4 md:p-16"
@@ -239,14 +232,14 @@ function BlogTable({ blogs: dataBlogs }) {
                     scope="row"
                     style={{ width: '1em' }}
                   >
-                    <Tooltip title={n.status === 1 ? 'Inabilitar' : 'Habiltiar'}>
+                    <Tooltip title={n.state ? 'Inabilitar' : 'Habiltiar'}>
                       <FormGroup row>
                         <FormControlLabel
                           control={
                             <CustomSwitch
-                              checked={n.status === 1}
+                              checked={n.state}
                               onChange={(event) => {
-                                console.log('evento');
+                                dispatch(updateStateBlog(n.id));
                               }}
                               name="estado"
                             />
@@ -258,8 +251,18 @@ function BlogTable({ blogs: dataBlogs }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16" component="th" scope="row" align="center">
-                    <Tooltip title={n.status === 1 ? 'Inabilitar' : 'Habiltiar'}>
-                      <span>acciones</span>
+                    <Tooltip title="Editar">
+                      <Button
+                        className="whitespace-no-wrap"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          dispatch(setInfoBlog(n));
+                          dispatch(openDialog({ title: 'Editar Blog', type: 'edit' }));
+                        }}
+                      >
+                        Editar
+                      </Button>
                     </Tooltip>
                   </TableCell>
                 </TableRow>

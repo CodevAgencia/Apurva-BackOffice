@@ -6,8 +6,19 @@ import clsx from 'clsx';
 import * as yup from 'yup';
 import _ from '@lodash';
 import { useDispatch } from 'react-redux';
-import { Button, Card, CardContent, darken, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardContent,
+  darken,
+  Icon,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { useState } from 'react';
 import { submitLogin } from '../../auth/store/loginSlice';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +54,7 @@ const defaultValues = {
 function Login() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { control, formState, handleSubmit, reset } = useForm({
     mode: 'onChange',
@@ -132,6 +144,19 @@ function Login() {
                     error={!!errors.password}
                     helperText={errors?.password?.message}
                     variant="outlined"
+                    InputProps={{
+                      className: 'pr-2',
+                      type: showPassword ? 'text' : 'password',
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowPassword(!showPassword)} size="large">
+                            <Icon className="text-20" color="action">
+                              {showPassword ? 'visibility' : 'visibility_off'}
+                            </Icon>
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                     required
                     fullWidth
                   />

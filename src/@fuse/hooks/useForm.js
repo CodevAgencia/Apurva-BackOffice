@@ -1,8 +1,9 @@
 import _ from '@lodash';
 import { useCallback, useState } from 'react';
 
-function useForm(initialState, onSubmit) {
+function useForm(initialState, onSubmit, rules) {
   const [form, setForm] = useState(initialState);
+  const [errors, setErrors] = useState({});
 
   const handleChange = useCallback((event) => {
     event.persist();
@@ -31,7 +32,16 @@ function useForm(initialState, onSubmit) {
         event.preventDefault();
       }
       if (onSubmit) {
-        onSubmit();
+        if (rules) {
+          if (Object.keys(rules(form)).length === 0) {
+            setErrors({});
+            onSubmit();
+          } else {
+            setErrors(rules(form));
+          }
+        } else {
+          onSubmit();
+        }
       }
     },
     [onSubmit]
@@ -43,7 +53,9 @@ function useForm(initialState, onSubmit) {
     handleSubmit,
     resetForm,
     setForm,
+    errors,
     setInForm,
+    setErrors,
   };
 }
 

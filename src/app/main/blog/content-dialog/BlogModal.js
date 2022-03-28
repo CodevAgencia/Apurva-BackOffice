@@ -1,23 +1,24 @@
 import { Autocomplete, Button, DialogActions, DialogContent, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import { FilePond, registerPlugin } from 'react-filepond';
 import { useForm } from '../../../../@fuse/hooks';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 import { getBlogsCategories, selectCategories } from '../../../store/app/blogCategoriesSlice';
-import { saveBlog } from '../../../store/app/blogSlice';
+import { restarInfoBlog, saveBlog, updateBlog } from '../../../store/app/blogSlice';
+import verifyFormBlog from '../rules/verifyFormBlog';
 
-const top100Films = [
-  { label: 'The Shawshank Redemption', year: 1994 },
-  { label: 'The Godfather', year: 1972 },
-  { label: 'The Godfather: Part II', year: 1974 },
-  { label: 'The Dark Knight', year: 2008 },
-  { label: '12 Angry Men', year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: 'Pulp Fiction', year: 1994 },
-];
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'filepond/dist/filepond.min.css';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
+registerPlugin(FilePondPluginImagePreview);
 
 const initialData = {
-  id: 10,
+  id: 0,
   title_en: '',
   title_es: '',
   description_en: '',
@@ -31,30 +32,49 @@ const BlogModal = () => {
   const [categorySelect, setCategorySelect] = useState('');
   const [nameCategory, setNameCategory] = useState('');
   const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
+  const isOpenDialog = useSelector(({ fuse }) => fuse.dialog.state);
+  const editBlogData = useSelector(({ blogs }) => blogs.infoBlog);
   const allCategories = useSelector(selectCategories);
   const { errors, form, handleChange, handleSubmit, setErrors, setForm, setInForm } = useForm(
     initialData,
-    () => handleSubmitProducts()
+    () => handleSubmitProducts(),
+    verifyFormBlog
   );
 
   useEffect(() => {
-    dispatch(getBlogsCategories());
+    dispatch(getBlogsCategories()).then((res) => {
+      const firtsCategory = res.payload[0];
+      setInForm('knowledge_category_id', firtsCategory.id);
+      setNameCategory(firtsCategory);
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (optionsDialog.type === 'edit') {
+      setForm({ ...form, ...editBlogData, knowledge_category_id: editBlogData.category.id });
+    } else {
+      setForm({ ...initialData });
+    }
   }, [dispatch]);
 
   const handleSubmitProducts = () => {
     if (optionsDialog?.type === 'new') {
       // GUARDAR
-      // dispatch(saveProduct({ idCommerce, dataProduct: form }));
-      console.log('FORM GUARDAR', form);
       dispatch(saveBlog(form));
     } else {
       // ACTUALIZAR
-      // dispatch(updateProduct(form));
       console.log('FOR ACTUALIZAR', form);
+      dispatch(updateBlog(form));
+      dispatch(restarInfoBlog());
     }
-    // setNameCategory('');
-    // dispatch(saveUser(form));
+    dispatch(closeDialog());
   };
+
+  useEffect(() => {
+    if (!isOpenDialog) {
+      dispatch(restarInfoBlog());
+    }
+  }, [isOpenDialog]);
 
   return (
     <>
@@ -96,6 +116,8 @@ const BlogModal = () => {
                   value={form.description_en}
                   variant="outlined"
                   fullWidth
+                  multiline
+                  minRows={3}
                   onChange={handleChange}
                 />
                 <TextField
@@ -107,6 +129,8 @@ const BlogModal = () => {
                   value={form.description_es}
                   variant="outlined"
                   fullWidth
+                  multiline
+                  minRows={3}
                   onChange={handleChange}
                 />
               </div>
@@ -114,12 +138,18 @@ const BlogModal = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  value={nameCategory || allCategories[0]}
+                  value={nameCategory}
                   options={allCategories}
-                  getOptionLabel={(option) => option.label}
-                  // sx={{ width:  }}
+                  getOptionLabel={(option) => option.category}
                   fullWidth
-                  renderInput={(params) => <TextField {...params} label="Categorias" />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Categorias"
+                      error={!!errors?.knowledge_category_id}
+                      helperText={errors?.knowledge_category_id && errors?.knowledge_category_id}
+                    />
+                  )}
                   onChange={(event, newValue) => {
                     setInForm('knowledge_category_id', newValue?.id);
                     setNameCategory(allCategories.find((item) => item.id === newValue?.id));
@@ -127,17 +157,32 @@ const BlogModal = () => {
                 />
               </div>
               <div className="flex flex-col w-full space-y-12">
-                <TextField
-                  error={!!errors?.image}
-                  helperText={errors?.image && errors?.image}
-                  id="image"
-                  label="Imagen"
-                  name="image"
-                  value={form.image}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
-                />
+                <div className="w-full flex flex-col" style={{ marginRight: '0.5rem' }}>
+                  <span className="inline-block justify-start font-bold mb-4">Imagen</span>
+                  <FilePond
+                    allowMultiple={false}
+                    credits=""
+                    labelIdle="<span>SUBE UNA IMAGEN</span>"
+                    name="files"
+                    maxFiles={1}
+                    onupdatefiles={(files) => {
+                      setInForm('image', files[0]?.file);
+                    }}
+                  />
+                  {errors?.image && (
+                    <span
+                      className="inline-block justify-start font-bold mb-4"
+                      style={{
+                        color: '#f44336',
+                        fontWeight: '400',
+                        marginLeft: '14px',
+                        fontSize: '1.114rem',
+                      }}
+                    >
+                      {errors?.image}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </form>
@@ -145,12 +190,19 @@ const BlogModal = () => {
       </DialogContent>
       <DialogActions className="justify-between px-8 py-16">
         <div className="px-16">
-          <Button onClick={() => dispatch(closeDialog())} variant="contained" color="primary">
+          <Button
+            onClick={() => {
+              dispatch(closeDialog());
+              dispatch(restarInfoBlog());
+            }}
+            variant="contained"
+            color="primary"
+          >
             Cancelar
           </Button>
         </div>
         <div className="px-16">
-          <Button onClick={handleSubmitProducts} variant="contained" color="secondary">
+          <Button onClick={handleSubmit} variant="contained" color="secondary">
             Guardar
           </Button>
         </div>

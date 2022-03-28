@@ -9,6 +9,7 @@ import { showMessage } from 'app/store/fuse/messageSlice';
 import auth0Service from 'app/services/auth0Service';
 import firebaseService from 'app/services/firebaseService';
 import jwtService from 'app/services/jwtService';
+import settingsConfig from 'app/fuse-configs/settingsConfig';
 
 export const setUserDataAuth0 = (tokenData) => async (dispatch) => {
   const user = {
@@ -82,9 +83,13 @@ export const setUserData = (user) => async (dispatch, getState) => {
   //   redirectUrl: '/users',
   // };
 
-  history.push({
-    pathname: '/users',
-  });
+  if (user.loginRedirectUrl) {
+    settingsConfig.loginRedirectUrl = user.loginRedirectUrl; // for example 'apps/academy'
+  }
+
+  // history.push({
+  //   pathname: '/users',
+  // });
 
   /*
   Set User Settings

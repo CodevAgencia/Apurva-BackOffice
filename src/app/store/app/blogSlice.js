@@ -1,7 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { showMessage } from '../fuse/messageSlice';
 import blogService from '../../services/apiService/blogService';
-import history from '../../../@history/@history';
 import { closeDialog } from '../fuse/dialogSlice';
 
 export const getBlogs = createAsyncThunk(
@@ -88,7 +87,7 @@ export const updateStateBlog = createAsyncThunk(
           variant: 'success',
         })
       );
-      history.go(0);
+      // history.go(0);
       return updateData;
     } catch (error) {
       dispatch(
@@ -154,6 +153,28 @@ const blogSlice = createSlice({
       blogsAdapter.addOne(state, action.payload);
     },
     [saveBlog.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [updateStateBlog.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateStateBlog.fulfilled]: (state, action) => {
+      state.loading = false;
+      blogsAdapter.upsertOne(state, action.payload);
+    },
+    [updateStateBlog.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [updateBlog.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateBlog.fulfilled]: (state, action) => {
+      state.loading = false;
+      blogsAdapter.upsertOne(state, action.payload);
+    },
+    [updateBlog.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
