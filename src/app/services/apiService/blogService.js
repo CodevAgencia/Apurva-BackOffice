@@ -78,6 +78,7 @@ const userblogModel = (data) => {
 };
 
 const updateBlogModel = (data) => {
+  data = data;
   return {
     ...data,
     state: data?.state?.is_enabled,

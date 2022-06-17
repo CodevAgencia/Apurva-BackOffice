@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, DialogActions, DialogContent, TextField } from '@mui/material';
+import { Autocomplete, Button, DialogActions, DialogContent, TextField } from '@mui/material';
 import { useForm } from '../../../../@fuse/hooks';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 
@@ -11,6 +11,8 @@ const initialData = {
   descripcion: '',
   valor: '',
   modulos: '',
+  nivel: '',
+  tipo: '',
 };
 
 const SuscripcionModal = () => {
@@ -54,11 +56,56 @@ const SuscripcionModal = () => {
                   onChange={handleChange}
                 />
               </div>
+              <div className="flex flex-col w-full space-y-12">
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  value=""
+                  options={[]}
+                  // getOptionLabel={(option) => option.category}
+                  fullWidth
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Nivel"
+                      error={!!errors?.nivel}
+                      helperText={errors?.nivel && errors?.nivel}
+                    />
+                  )}
+                  onChange={(event, newValue) => {
+                    // setInForm('nivel', newValue?.id);
+                    // setNameCategory(allCategories.find((item) => item.id === newValue?.id));
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col w-full space-y-12">
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  value=""
+                  options={[]}
+                  // getOptionLabel={(option) => option.category}
+                  fullWidth
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Tipo"
+                      error={!!errors?.tipo}
+                      helperText={errors?.tipo && errors?.tipo}
+                    />
+                  )}
+                  onChange={(event, newValue) => {
+                    // setInForm('nivel', newValue?.id);
+                    // setNameCategory(allCategories.find((item) => item.id === newValue?.id));
+                  }}
+                />
+              </div>
               <div>
                 <TextField
                   error={!!errors?.periodidad}
                   helperText={errors?.periodidad && errors?.periodidad}
-                  id="tperiodidad"
+                  id="periodidad"
                   label="Periodidad"
                   name="periodidad"
                   value={form.periodidad}

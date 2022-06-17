@@ -1,7 +1,7 @@
 import FuseUtils from '@fuse/utils/FuseUtils';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import {Axios} from "../apiService/apiService";
+import { Axios } from '../apiService/apiService';
 /* eslint-disable camelcase */
 
 class JwtService extends FuseUtils.EventEmitter {
