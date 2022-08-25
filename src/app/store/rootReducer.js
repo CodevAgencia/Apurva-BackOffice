@@ -5,6 +5,7 @@ import i18n from './i18nSlice';
 import users from './app/usuarioSlice';
 import blogs from './app/blogSlice';
 import categories from './app/blogCategoriesSlice';
+import suscripciones from './app/suscriptionSlice';
 
 const createReducer = (asyncReducers) => (state, action) => {
   const combinedReducer = combineReducers({
@@ -15,6 +16,7 @@ const createReducer = (asyncReducers) => (state, action) => {
     users,
     blogs,
     categories,
+    suscripciones,
   });
 
   /*

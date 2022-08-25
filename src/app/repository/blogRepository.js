@@ -49,14 +49,4 @@ const blogRepository = {
   },
 };
 
-const top100Films = [
-  { id: 1, label: 'The Shawshank Redemption', year: 1994 },
-  { id: 2, label: 'The Godfather', year: 1972 },
-  { id: 3, label: 'The Godfather: Part II', year: 1974 },
-  { id: 4, label: 'The Dark Knight', year: 2008 },
-  { id: 5, label: '12 Angry Men', year: 1957 },
-  { id: 6, label: "Schindler's List", year: 1993 },
-  { id: 7, label: 'Pulp Fiction', year: 1994 },
-];
-
 export default blogRepository;

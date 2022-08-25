@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDeepCompareEffect } from '../../../@fuse/hooks';
@@ -9,6 +9,7 @@ import SuscripcionTable from './SuscripcionTable';
 import SuscripcionesSidebarHeader from './SuscripcionesSidebarHeader';
 import SuscripcionesSidebarContent from './SuscripcionesSidebarContent';
 import SuscripcionModal from './content-dialog/SuscripcionModal';
+import { getSuscriptions } from '../../store/app/suscriptionSlice';
 
 const initialFakeData = [
   {
@@ -66,6 +67,10 @@ function Suscripciones(props) {
   useDeepCompareEffect(() => {
     // dispatch(getTodos(routeParams));
   }, [dispatch, routeParams]);
+
+  useEffect(() => {
+    dispatch(getSuscriptions());
+  }, [dispatch]);
 
   return (
     <>
