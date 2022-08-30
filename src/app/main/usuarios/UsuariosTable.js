@@ -174,7 +174,7 @@ function UsuariosTable({ users: dataUsers }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.name}
+                    {n.email}
                   </TableCell>
 
                   <TableCell

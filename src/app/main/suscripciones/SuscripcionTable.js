@@ -23,6 +23,9 @@ import {
 } from '@mui/material';
 import SuscripcionesTableHead from './SuscripcionesTableHead';
 import { skyBlue } from '../../../@fuse/colors';
+import { findSuscriptionLevel, findSuscriptionType } from '../../utils/levelAndTypeSuscription';
+import { findPeriodidad } from '../../utils/perioridadSuscriptions';
+import { TruncateString } from '../../utils/TruncateString';
 
 const rows = [
   {
@@ -37,6 +40,20 @@ const rows = [
     align: 'left',
     disablePadding: false,
     label: 'Nombre',
+    sort: true,
+  },
+  {
+    id: 'nivel',
+    align: 'left',
+    disablePadding: false,
+    label: 'Nivel',
+    sort: true,
+  },
+  {
+    id: 'tipo',
+    align: 'left',
+    disablePadding: false,
+    label: 'Tipo',
     sort: true,
   },
   {
@@ -102,7 +119,7 @@ const CustomSwitch = withStyles({
 function UsuariosTable({ dataFilter }) {
   const dispatch = useDispatch();
   const searchText = useSelector(({ users }) => users.searchText);
-
+  const { types, levels } = useSelector(({ suscripciones }) => suscripciones);
   const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState(dataFilter);
@@ -165,15 +182,23 @@ function UsuariosTable({ dataFilter }) {
                   // onClick={(event) => handleClick(n)}
                 >
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.codigo}
+                    {n.id}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.nombre}
+                    {n.name_es}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.periodidad}
+                    {findSuscriptionLevel(n.level_id, levels)}
+                  </TableCell>
+
+                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                    {findSuscriptionType(n.type_id, types)}
+                  </TableCell>
+
+                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                    {findPeriodidad(n.period)}
                   </TableCell>
 
                   <TableCell
@@ -189,11 +214,11 @@ function UsuariosTable({ dataFilter }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.descripcion}
+                    {TruncateString(n?.description_es, 25)}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.valor}
+                    {n.price}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">

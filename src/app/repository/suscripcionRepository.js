@@ -2,6 +2,8 @@ import http from '../services/http';
 
 const getSuscriptionListUrl = '/api/v1/subscriptions';
 const updateSuscriptionUrl = '/api/v1/subscription';
+const getSuscriptionTypeUrl = '/api/v1/subscriptions-type';
+const getSuscriptionLevelUrl = '/api/v1/levels-suscriptions';
 
 const suscriptionRepository = {
   getSuscriptions: async () => {
@@ -24,6 +26,24 @@ const suscriptionRepository = {
     // eslint-disable-next-line no-useless-catch
     try {
       return await http.get(`${updateSuscriptionUrl}/${id}`, data);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /* tipos y niveles para suscripciones */
+  getTypesSuscriptions: async () => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      return await http.get(`${getSuscriptionTypeUrl}`);
+    } catch (error) {
+      throw error;
+    }
+  },
+  getLevelsSuscriptions: async () => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      return await http.get(`${getSuscriptionLevelUrl}`);
     } catch (error) {
       throw error;
     }

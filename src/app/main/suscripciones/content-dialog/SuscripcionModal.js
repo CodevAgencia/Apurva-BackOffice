@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete, Button, DialogActions, DialogContent, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useForm } from '../../../../@fuse/hooks';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 
@@ -18,10 +19,19 @@ const initialData = {
 const SuscripcionModal = () => {
   const dispatch = useDispatch();
   const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
+  const { types, levels } = useSelector(({ suscripciones }) => suscripciones);
+  const [nameLevel, setNameLevel] = useState('');
+  const [nameType, setNameType] = useState('');
+
   const { errors, form, handleChange, handleSubmit, setErrors, setForm, setInForm } = useForm(
     initialData,
     () => handleSubmitProducts()
   );
+
+  useEffect(() => {
+    setNameLevel(levels?.[0]);
+    setNameType(types?.[0]);
+  }, [types, levels]);
 
   const handleSubmitProducts = () => {
     if (optionsDialog?.type === 'new') {
@@ -60,9 +70,9 @@ const SuscripcionModal = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  value=""
-                  options={[]}
-                  // getOptionLabel={(option) => option.category}
+                  value={nameLevel}
+                  options={levels}
+                  getOptionLabel={(option) => option.name}
                   fullWidth
                   renderInput={(params) => (
                     <TextField
@@ -73,8 +83,8 @@ const SuscripcionModal = () => {
                     />
                   )}
                   onChange={(event, newValue) => {
-                    // setInForm('nivel', newValue?.id);
-                    // setNameCategory(allCategories.find((item) => item.id === newValue?.id));
+                    setInForm('nivel', newValue?.id);
+                    setNameLevel(levels.find((item) => item.id === newValue?.id));
                   }}
                 />
               </div>
@@ -83,9 +93,9 @@ const SuscripcionModal = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  value=""
-                  options={[]}
-                  // getOptionLabel={(option) => option.category}
+                  value={nameType}
+                  options={types}
+                  getOptionLabel={(option) => option.name}
                   fullWidth
                   renderInput={(params) => (
                     <TextField
@@ -96,8 +106,8 @@ const SuscripcionModal = () => {
                     />
                   )}
                   onChange={(event, newValue) => {
-                    // setInForm('nivel', newValue?.id);
-                    // setNameCategory(allCategories.find((item) => item.id === newValue?.id));
+                    setInForm('tipo', newValue?.id);
+                    setNameType(types.find((item) => item.id === newValue?.id));
                   }}
                 />
               </div>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDeepCompareEffect } from '../../../@fuse/hooks';
 import FusePageCarded from '../../../@fuse/core/FusePageCarded/FusePageCarded';
@@ -9,7 +9,12 @@ import SuscripcionTable from './SuscripcionTable';
 import SuscripcionesSidebarHeader from './SuscripcionesSidebarHeader';
 import SuscripcionesSidebarContent from './SuscripcionesSidebarContent';
 import SuscripcionModal from './content-dialog/SuscripcionModal';
-import { getSuscriptions } from '../../store/app/suscriptionSlice';
+import {
+  getSuscriptions,
+  getSuscriptionsLevels,
+  getSuscriptionsTypes,
+  selectSuscriptions,
+} from '../../store/app/suscriptionSlice';
 
 const initialFakeData = [
   {
@@ -60,6 +65,7 @@ const categories = [
 
 function Suscripciones(props) {
   const dispatch = useDispatch();
+  const subscriptions = useSelector(selectSuscriptions);
 
   const pageLayout = useRef(null);
   const routeParams = useParams();
@@ -70,6 +76,8 @@ function Suscripciones(props) {
 
   useEffect(() => {
     dispatch(getSuscriptions());
+    dispatch(getSuscriptionsTypes());
+    dispatch(getSuscriptionsLevels());
   }, [dispatch]);
 
   return (
@@ -82,7 +90,7 @@ function Suscripciones(props) {
         }}
         header={<SuscripcionesHeader pageLayout={pageLayout} />}
         contentToolbar=""
-        content={<SuscripcionTable dataFilter={initialFakeData} />}
+        content={<SuscripcionTable dataFilter={subscriptions} />}
         leftSidebarHeader={<SuscripcionesSidebarHeader />}
         leftSidebarContent={<SuscripcionesSidebarContent categories={categories} />}
         ref={pageLayout}

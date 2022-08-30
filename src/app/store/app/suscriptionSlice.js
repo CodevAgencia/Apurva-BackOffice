@@ -25,14 +25,63 @@ export const getSuscriptions = createAsyncThunk(
   }
 );
 
+/* tipos y niveles para suscripciones */
+export const getSuscriptionsTypes = createAsyncThunk(
+  'suscriptions/getSuscriptionsTypes',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(
+        showMessage({
+          message: 'Tipos cargados correctamente.',
+          variant: 'success',
+        })
+      );
+      return await suscriptionService.getTypesSuscriptions();
+    } catch (error) {
+      dispatch(
+        showMessage({
+          message: 'Error al obtener los Tipos.',
+          variant: 'error',
+        })
+      );
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getSuscriptionsLevels = createAsyncThunk(
+  'suscriptions/getSuscriptionsLevels',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(
+        showMessage({
+          message: 'Niveles cargados correctamente.',
+          variant: 'success',
+        })
+      );
+      return await suscriptionService.getLevelsSuscriptions();
+    } catch (error) {
+      dispatch(
+        showMessage({
+          message: 'Error al obtener los Niveles.',
+          variant: 'error',
+        })
+      );
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const suscriptionsAdapter = createEntityAdapter({});
 
 export const { selectAll: selectSuscriptions, selectById: selectSuscriptionsById } =
-  suscriptionsAdapter.getSelectors((state) => state.suscriptions);
+  suscriptionsAdapter.getSelectors((state) => state.suscripciones);
 
 const suscriptionSlice = createSlice({
   name: 'suscriptions',
   initialState: suscriptionsAdapter.getInitialState({
+    types: [],
+    levels: [],
     searchText: '',
     errors: {},
     loading: false,
@@ -63,8 +112,27 @@ const suscriptionSlice = createSlice({
     [getSuscriptions.fulfilled]: (state, action) => {
       state.loading = false;
       suscriptionsAdapter.setAll(state, action.payload);
+      console.log('SUSCRIPTIONS ->: ', action.payload);
     },
     [getSuscriptions.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [getSuscriptionsTypes.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.types = action.payload;
+      console.log('TYPES ->: ', action.payload);
+    },
+    [getSuscriptionsTypes.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [getSuscriptionsLevels.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.levels = action.payload;
+      console.log('LEVELS ->: ', action.payload);
+    },
+    [getSuscriptionsLevels.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
