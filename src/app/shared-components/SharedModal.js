@@ -2,8 +2,9 @@ import { MdClose } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppBar, Dialog, IconButton, Toolbar, Typography } from '@mui/material';
 import { closeDialog } from '../store/fuse/dialogSlice';
+import { SelectModalContent } from '../utils/modulesNameList';
 
-const SharedModal = ({ children }) => {
+const SharedModal = () => {
   const dispatch = useDispatch();
   const isOpenDialog = useSelector(({ fuse }) => fuse.dialog.state);
   const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
@@ -45,7 +46,7 @@ const SharedModal = ({ children }) => {
         </Toolbar>
       </AppBar>
 
-      <div className="mx-16">{children}</div>
+      <div className="mx-16">{SelectModalContent[optionsDialog.modal]}</div>
     </Dialog>
   );
 };

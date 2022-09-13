@@ -11,7 +11,6 @@ import {
   RadioGroup,
 } from '@mui/material';
 import { setFilter } from '../../store/app/usuarioSlice';
-import { openDialog } from '../../store/fuse/dialogSlice';
 
 const useStyles = makeStyles((theme) => ({
   listItem: {
@@ -77,14 +76,16 @@ function UsuariosSidebarContent(props) {
       className="flex-auto border-l-1 border-solid"
     >
       <div className="p-24 pb-16 space-y-8">
-        <Button
-          onClick={() => dispatch(openDialog({ title: 'Nuevo Usuraio', type: 'new' }))}
-          variant="contained"
-          color="secondary"
-          className="w-full"
-        >
-          Nuevo Usuario
-        </Button>
+        {/* <Button */}
+        {/*  onClick={() => */}
+        {/*    dispatch(openDialog({ title: 'Nuevo Usuraio', type: 'new', modal: 'userModalContent' })) */}
+        {/*  } */}
+        {/*  variant="contained" */}
+        {/*  color="secondary" */}
+        {/*  className="w-full" */}
+        {/* > */}
+        {/*  Nuevo Usuario */}
+        {/* </Button> */}
         <Button
           onClick={() => console.log('exportar')}
           variant="outlined"

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { showMessage } from '../fuse/messageSlice';
 import suscriptionService from '../../services/apiService/suscripcionService';
+import { closeDialog } from '../fuse/dialogSlice';
 
 export const getSuscriptions = createAsyncThunk(
   'suscriptions/getSuscriptions',
@@ -72,6 +73,56 @@ export const getSuscriptionsLevels = createAsyncThunk(
   }
 );
 
+export const saveSuscription = createAsyncThunk(
+  'suscriptions/saveSuscription',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const newSuscription = await suscriptionService.saveSuscription(data);
+      dispatch(
+        showMessage({
+          message: 'Suscripcion creada correctamente',
+          variant: 'success',
+        })
+      );
+      dispatch(closeDialog());
+      return newSuscription;
+    } catch (error) {
+      dispatch(
+        showMessage({
+          message: 'Error al crear la Suscripción.',
+          variant: 'error',
+        })
+      );
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const updateSuscription = createAsyncThunk(
+  'suscriptions/updateSuscription',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const updateData = await suscriptionService.updateSuscription(data);
+      dispatch(
+        showMessage({
+          message: 'Suscripción actualizado correctamente.',
+          variant: 'success',
+        })
+      );
+      dispatch(closeDialog());
+      return updateData;
+    } catch (error) {
+      dispatch(
+        showMessage({
+          message: 'Error al actualizar la Suscripción.',
+          variant: 'error',
+        })
+      );
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const suscriptionsAdapter = createEntityAdapter({});
 
 export const { selectAll: selectSuscriptions, selectById: selectSuscriptionsById } =
@@ -89,21 +140,21 @@ const suscriptionSlice = createSlice({
     filter: 0,
   }),
   reducers: {
-    // setBlogSearchText: {
-    //   reducer: (state, action) => {
-    //     state.searchText = action.payload;
-    //   },
-    //   prepare: (event) => ({ payload: event.target.value || '' }),
-    // },
-    // setInfoBlog: (state, action) => {
-    //   state.infoBlog = action.payload;
-    // },
-    // restarInfoBlog: (state) => {
-    //   state.infoBlog = null;
-    // },
-    // setFilterBlog: (state, action) => {
-    //   state.filter = action.payload;
-    // },
+    setSuscriptionSearchText: {
+      reducer: (state, action) => {
+        state.searchText = action.payload;
+      },
+      prepare: (event) => ({ payload: event.target.value || '' }),
+    },
+    setInfoSuscription: (state, action) => {
+      state.infoSuscription = action.payload;
+    },
+    restarInfoSuscription: (state) => {
+      state.infoSuscription = null;
+    },
+    setFilterStateSuscription: (state, action) => {
+      state.filter = action.payload;
+    },
   },
   extraReducers: {
     [getSuscriptions.pending]: (state) => {
@@ -112,7 +163,6 @@ const suscriptionSlice = createSlice({
     [getSuscriptions.fulfilled]: (state, action) => {
       state.loading = false;
       suscriptionsAdapter.setAll(state, action.payload);
-      console.log('SUSCRIPTIONS ->: ', action.payload);
     },
     [getSuscriptions.rejected]: (state, action) => {
       state.loading = false;
@@ -121,7 +171,6 @@ const suscriptionSlice = createSlice({
     [getSuscriptionsTypes.fulfilled]: (state, action) => {
       state.loading = false;
       state.types = action.payload;
-      console.log('TYPES ->: ', action.payload);
     },
     [getSuscriptionsTypes.rejected]: (state, action) => {
       state.loading = false;
@@ -130,34 +179,33 @@ const suscriptionSlice = createSlice({
     [getSuscriptionsLevels.fulfilled]: (state, action) => {
       state.loading = false;
       state.levels = action.payload;
-      console.log('LEVELS ->: ', action.payload);
     },
     [getSuscriptionsLevels.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
-    // [saveBlog.pending]: (state) => {
-    //   state.loading = true;
-    // },
-    // [saveBlog.fulfilled]: (state, action) => {
-    //   state.loading = false;
-    //   blogsAdapter.addOne(state, action.payload);
-    // },
-    // [saveBlog.rejected]: (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // },
-    // [updateStateBlog.pending]: (state) => {
-    //   state.loading = true;
-    // },
-    // [updateStateBlog.fulfilled]: (state, action) => {
-    //   state.loading = false;
-    //   blogsAdapter.upsertOne(state, action.payload);
-    // },
-    // [updateStateBlog.rejected]: (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // },
+    [saveSuscription.pending]: (state) => {
+      state.loading = true;
+    },
+    [saveSuscription.fulfilled]: (state, action) => {
+      state.loading = false;
+      suscriptionsAdapter.addOne(state, action.payload);
+    },
+    [saveSuscription.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [updateSuscription.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateSuscription.fulfilled]: (state, action) => {
+      state.loading = false;
+      suscriptionsAdapter.upsertOne(state, action.payload);
+    },
+    [updateSuscription.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     // [updateBlog.pending]: (state) => {
     //   state.loading = true;
     // },
@@ -172,6 +220,11 @@ const suscriptionSlice = createSlice({
   },
 });
 
-// export const { setBlogSearchText, setInfoBlog, restarInfoBlog, setFilterBlog } = blogSlice.actions;
+export const {
+  setSuscriptionSearchText,
+  setFilterStateSuscription,
+  setInfoSuscription,
+  restarInfoSuscription,
+} = suscriptionSlice.actions;
 
 export default suscriptionSlice.reducer;

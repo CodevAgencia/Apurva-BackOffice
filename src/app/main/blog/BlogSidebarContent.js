@@ -61,7 +61,9 @@ function UsuariosSidebarContent(props) {
     >
       <div className="p-24 pb-16 space-y-8">
         <Button
-          onClick={() => dispatch(openDialog({ title: 'Nuevo Blog', type: 'new' }))}
+          onClick={() =>
+            dispatch(openDialog({ title: 'Nuevo Blog', type: 'new', modal: 'blogModalContent' }))
+          }
           variant="contained"
           color="secondary"
           className="w-full"

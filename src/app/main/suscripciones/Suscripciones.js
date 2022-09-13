@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDeepCompareEffect } from '../../../@fuse/hooks';
@@ -8,7 +8,6 @@ import SuscripcionesHeader from './SuscripcionesHeader';
 import SuscripcionTable from './SuscripcionTable';
 import SuscripcionesSidebarHeader from './SuscripcionesSidebarHeader';
 import SuscripcionesSidebarContent from './SuscripcionesSidebarContent';
-import SuscripcionModal from './content-dialog/SuscripcionModal';
 import {
   getSuscriptions,
   getSuscriptionsLevels,
@@ -66,9 +65,15 @@ const categories = [
 function Suscripciones(props) {
   const dispatch = useDispatch();
   const subscriptions = useSelector(selectSuscriptions);
+  const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
+  const [dialogType, setDialogType] = useState();
 
   const pageLayout = useRef(null);
   const routeParams = useParams();
+
+  useEffect(() => {
+    setDialogType(optionsDialog.module);
+  }, [optionsDialog]);
 
   useDeepCompareEffect(() => {
     // dispatch(getTodos(routeParams));
@@ -96,9 +101,7 @@ function Suscripciones(props) {
         ref={pageLayout}
         innerScroll
       />
-      <SharedModal>
-        <SuscripcionModal />
-      </SharedModal>
+      <SharedModal />
     </>
   );
 }

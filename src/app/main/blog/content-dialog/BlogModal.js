@@ -63,7 +63,7 @@ const BlogModal = () => {
       dispatch(saveBlog(form));
     } else {
       // ACTUALIZAR
-      console.log('FOR ACTUALIZAR', form);
+      // console.log('FOR ACTUALIZAR', form);
       dispatch(updateBlog(form));
       dispatch(restarInfoBlog());
     }

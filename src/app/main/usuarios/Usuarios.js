@@ -7,7 +7,6 @@ import UsuariosHeader from './UsuariosHeader';
 import UsuariosSidebarHeader from './UsuariosSidebarHeader';
 import SharedModal from '../../shared-components/SharedModal';
 import UsuariosSidebarContent from './UsuarioSidebarContent';
-import DocumentosAdjuntosModal from './content-dialog/DocumentosAdjuntosModal';
 import UsuariosTable from './UsuariosTable';
 import { getUsers, selectUsers } from '../../store/app/usuarioSlice';
 
@@ -53,9 +52,7 @@ function Usuarios(props) {
         ref={pageLayout}
         innerScroll
       />
-      <SharedModal>
-        <DocumentosAdjuntosModal />
-      </SharedModal>
+      <SharedModal />
     </>
   );
 }

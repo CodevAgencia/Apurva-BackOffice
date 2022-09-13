@@ -161,11 +161,7 @@ function UsuariosTable({ users: dataUsers }) {
                       className="rounded-full overflow-hidden"
                       style={{ width: '40px', height: '40px' }}
                     >
-                      <img
-                        src="assets/images/avatars/ApurvaLogo.jpg"
-                        alt={n.name}
-                        className="w-full object-cover"
-                      />
+                      <img src={n?.photo?.url} alt={n.name} className="w-full object-cover" />
                     </div>
                   </TableCell>
 

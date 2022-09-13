@@ -1,6 +1,7 @@
 import http from '../services/http';
 
 const getSuscriptionListUrl = '/api/v1/subscriptions';
+const saveSuscriptionUrl = '/api/v1/subscription';
 const updateSuscriptionUrl = '/api/v1/subscription';
 const getSuscriptionTypeUrl = '/api/v1/subscriptions-type';
 const getSuscriptionLevelUrl = '/api/v1/levels-suscriptions';
@@ -17,7 +18,7 @@ const suscriptionRepository = {
   saveSuscription: async (data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      return await http.post(`${updateSuscriptionUrl}`, data);
+      return await http.post(`${saveSuscriptionUrl}`, data);
     } catch (error) {
       throw error;
     }
@@ -25,7 +26,7 @@ const suscriptionRepository = {
   updateSuscription: async (id, data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      return await http.get(`${updateSuscriptionUrl}/${id}`, data);
+      return await http.post(`${updateSuscriptionUrl}/${id}`, data);
     } catch (error) {
       throw error;
     }

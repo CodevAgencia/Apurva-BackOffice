@@ -2,12 +2,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectMainTheme } from 'app/store/fuse/settingsSlice';
 import { Hidden, Icon, IconButton, Input, Paper } from '@mui/material';
-import { setUsersSearchText } from '../../store/app/usuarioSlice';
+import { setSuscriptionSearchText } from '../../store/app/suscriptionSlice';
 
 function SuscripcionesHeader(props) {
   const dispatch = useDispatch();
   const mainTheme = useSelector(selectMainTheme);
-  const searchText = useSelector(({ users }) => users.searchText);
+  const searchText = useSelector(({ suscripciones }) => suscripciones.searchText);
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -34,7 +34,7 @@ function SuscripcionesHeader(props) {
             inputProps={{
               'aria-label': 'Search',
             }}
-            onChange={(ev) => dispatch(setUsersSearchText(ev))}
+            onChange={(ev) => dispatch(setSuscriptionSearchText(ev))}
           />
         </Paper>
       </div>

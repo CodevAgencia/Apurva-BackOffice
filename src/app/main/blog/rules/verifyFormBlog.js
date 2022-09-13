@@ -10,7 +10,7 @@ const verifyFormBlog = (values) => {
   }
 
   if (!values.description_en) {
-    errors.description_en = 'Ingrese una descripción en español.';
+    errors.description_en = 'Ingrese una descripción en ingles.';
   }
 
   if (!values.description_es) {

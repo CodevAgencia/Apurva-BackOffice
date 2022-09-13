@@ -10,8 +10,8 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { setFilter } from '../../store/app/usuarioSlice';
 import { openDialog } from '../../store/fuse/dialogSlice';
+import { setFilterStateSuscription } from '../../store/app/suscriptionSlice';
 
 const useStyles = makeStyles((theme) => ({
   listItem: {
@@ -66,8 +66,8 @@ function UsuariosSidebarContent(props) {
 
   // TODO: RECUPERAR LAS CATEGORIAS DEL STORE PARA LISTARLAS
 
-  const handleSelectCategoryFilter = (id) => {
-    dispatch(setFilter(id));
+  const handleSelectStateSuscriptionFilter = (id) => {
+    dispatch(setFilterStateSuscription(id));
   };
 
   return (
@@ -78,7 +78,15 @@ function UsuariosSidebarContent(props) {
     >
       <div className="p-24 pb-16 space-y-8">
         <Button
-          onClick={() => dispatch(openDialog({ title: 'Nueva Suscripción', type: 'new' }))}
+          onClick={() =>
+            dispatch(
+              openDialog({
+                title: 'Nueva Suscripción',
+                type: 'new',
+                modal: 'suscriptionModalContent',
+              })
+            )
+          }
           variant="contained"
           color="secondary"
           className="w-full"
@@ -108,7 +116,7 @@ function UsuariosSidebarContent(props) {
                     value="all"
                     control={<Radio />}
                     label="Todos"
-                    onClick={(event) => handleSelectCategoryFilter(0)}
+                    onClick={(event) => handleSelectStateSuscriptionFilter(0)}
                   />
                   {props.categories.map((item) => (
                     <FormControlLabel
@@ -116,7 +124,7 @@ function UsuariosSidebarContent(props) {
                       value={item?.id?.toString()}
                       control={<Radio />}
                       label={item?.category}
-                      onClick={(event) => handleSelectCategoryFilter(item?.id)}
+                      onClick={(event) => handleSelectStateSuscriptionFilter(item?.id)}
                     />
                   ))}
                 </RadioGroup>

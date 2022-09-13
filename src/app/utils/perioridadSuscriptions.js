@@ -11,3 +11,5 @@ export const findPeriodidad = (idPeriodo) => {
       return 'Sin definir';
   }
 };
+
+export const PeriodidadNamesList = ['Mensual', 'Trimestral', 'Anual'];

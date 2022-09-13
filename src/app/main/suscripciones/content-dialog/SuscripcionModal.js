@@ -3,48 +3,100 @@ import { Autocomplete, Button, DialogActions, DialogContent, TextField } from '@
 import { useEffect, useState } from 'react';
 import { useForm } from '../../../../@fuse/hooks';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
+import verifyFormSuscription from '../rules/verifyFormSuscription';
+import {
+  restarInfoSuscription,
+  saveSuscription,
+  updateSuscription,
+} from '../../../store/app/suscriptionSlice';
 
 const initialData = {
-  id: 0,
-  nombre: '',
-  periodidad: '',
-  foto: '',
-  descripcion: '',
-  valor: '',
-  modulos: '',
-  nivel: '',
-  tipo: '',
+  name_en: '',
+  description_en: '',
+  name_es: '',
+  description_es: '',
+  price: '',
+  period: 1,
+  active: 1,
+  level_id: '',
+  type_id: '',
 };
+
+const periodidadData = [
+  {
+    id: 1,
+    name: 'Mensual',
+    value: 1,
+  },
+  {
+    id: 2,
+    name: 'Trimestral',
+    value: 3,
+  },
+  {
+    id: 3,
+    name: 'Anual',
+    value: 12,
+  },
+];
 
 const SuscripcionModal = () => {
   const dispatch = useDispatch();
   const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
+  const isOpenDialog = useSelector(({ fuse }) => fuse.dialog.state);
   const { types, levels } = useSelector(({ suscripciones }) => suscripciones);
+  const editSuscriptionData = useSelector(({ suscripciones }) => suscripciones.infoSuscription);
   const [nameLevel, setNameLevel] = useState('');
   const [nameType, setNameType] = useState('');
+  const [periodSelect, setPeriodSelect] = useState([]);
 
   const { errors, form, handleChange, handleSubmit, setErrors, setForm, setInForm } = useForm(
     initialData,
-    () => handleSubmitProducts()
+    () => handleSubmitSuscriptions(),
+    verifyFormSuscription
   );
 
   useEffect(() => {
-    setNameLevel(levels?.[0]);
-    setNameType(types?.[0]);
+    if (optionsDialog.type === 'edit') {
+      setForm({
+        ...form,
+        ...editSuscriptionData,
+      });
+      setPeriodSelect(periodidadData.find((i) => i.value === editSuscriptionData.period));
+      setNameLevel(levels.find((i) => i.id === editSuscriptionData.level_id));
+      setNameType(types.find((i) => i.id === editSuscriptionData.type_id));
+    } else {
+      setForm({ ...initialData });
+      setPeriodSelect(periodidadData[0]);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (optionsDialog.type === 'new') {
+      setNameLevel(levels?.[0]);
+      setNameType(types?.[0]);
+      setForm({
+        ...form,
+        level_id: handleGetIdLevelAndType(levels),
+        type_id: handleGetIdLevelAndType(types),
+      });
+    }
   }, [types, levels]);
 
-  const handleSubmitProducts = () => {
+  const handleGetIdLevelAndType = (data) => {
+    if (!data?.[0] || data.length < 1) return 0;
+    return data?.[0]?.id;
+  };
+
+  const handleSubmitSuscriptions = () => {
     if (optionsDialog?.type === 'new') {
       // GUARDAR
-      // dispatch(saveProduct({ idCommerce, dataProduct: form }));
-      console.log('FORM GUARDAR', form);
+      dispatch(saveSuscription(form));
     } else {
       // ACTUALIZAR
-      // dispatch(updateProduct(form));
-      console.log('FOR ACTUALIZAR', form);
+      dispatch(updateSuscription(form));
+      dispatch(restarInfoSuscription());
     }
-    // setNameCategory('');
-    // dispatch(saveUser(form));
   };
 
   return (
@@ -55,17 +107,103 @@ const SuscripcionModal = () => {
             <div className="flex flex-col w-full space-y-12">
               <div>
                 <TextField
-                  error={!!errors?.nombre}
-                  helperText={errors?.nombre && errors?.nombre}
-                  id="nombre"
-                  label="Nombre"
-                  name="nombre"
-                  value={form.nombre}
+                  error={!!errors?.name_en}
+                  helperText={errors?.name_en && errors?.name_en}
+                  id="name_en"
+                  label="Nombre (en)"
+                  name="name_en"
+                  value={form.name_en}
                   variant="outlined"
                   fullWidth
                   onChange={handleChange}
                 />
               </div>
+
+              <div>
+                <TextField
+                  error={!!errors?.name_es}
+                  helperText={errors?.name_es && errors?.name_es}
+                  id="name_es"
+                  label="Nombre (es)"
+                  name="name_es"
+                  value={form.name_es}
+                  variant="outlined"
+                  fullWidth
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <TextField
+                  error={!!errors?.description_en}
+                  helperText={errors?.description_en && errors?.description_en}
+                  id="description_en"
+                  label="Descripción (en)"
+                  name="description_en"
+                  value={form.description_en}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  maxRows={4}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <TextField
+                  error={!!errors?.description_es}
+                  helperText={errors?.description_es && errors?.description_es}
+                  id="description_es"
+                  label="Descripción (es)"
+                  name="description_es"
+                  value={form.description_es}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  maxRows={4}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <TextField
+                  error={!!errors?.price}
+                  helperText={errors?.price && errors?.price}
+                  id="price"
+                  type="number"
+                  inputProps={{ min: 0 }}
+                  label="Valor"
+                  name="price"
+                  value={form.price}
+                  variant="outlined"
+                  fullWidth
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="flex flex-col w-full space-y-12">
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  value={periodSelect}
+                  options={periodidadData}
+                  getOptionLabel={(option) => option.name}
+                  fullWidth
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Periodidad"
+                      error={!!errors?.period}
+                      helperText={errors?.period && errors?.period}
+                    />
+                  )}
+                  onChange={(event, newValue) => {
+                    setInForm('period', newValue?.value);
+                    setPeriodSelect(periodidadData.find((item) => item.id === newValue?.id));
+                  }}
+                />
+              </div>
+
               <div className="flex flex-col w-full space-y-12">
                 <Autocomplete
                   disablePortal
@@ -78,12 +216,12 @@ const SuscripcionModal = () => {
                     <TextField
                       {...params}
                       label="Nivel"
-                      error={!!errors?.nivel}
-                      helperText={errors?.nivel && errors?.nivel}
+                      error={!!errors?.level_id}
+                      helperText={errors?.level_id && errors?.level_id}
                     />
                   )}
                   onChange={(event, newValue) => {
-                    setInForm('nivel', newValue?.id);
+                    setInForm('level_id', newValue?.id);
                     setNameLevel(levels.find((item) => item.id === newValue?.id));
                   }}
                 />
@@ -101,79 +239,14 @@ const SuscripcionModal = () => {
                     <TextField
                       {...params}
                       label="Tipo"
-                      error={!!errors?.tipo}
-                      helperText={errors?.tipo && errors?.tipo}
+                      error={!!errors?.type_id}
+                      helperText={errors?.type_id && errors?.type_id}
                     />
                   )}
                   onChange={(event, newValue) => {
-                    setInForm('tipo', newValue?.id);
+                    setInForm('type_id', newValue?.id);
                     setNameType(types.find((item) => item.id === newValue?.id));
                   }}
-                />
-              </div>
-              <div>
-                <TextField
-                  error={!!errors?.periodidad}
-                  helperText={errors?.periodidad && errors?.periodidad}
-                  id="periodidad"
-                  label="Periodidad"
-                  name="periodidad"
-                  value={form.periodidad}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <TextField
-                  error={!!errors?.foto}
-                  helperText={errors?.foto && errors?.foto}
-                  id="foto"
-                  label="Foto"
-                  name="foto"
-                  value={form.foto}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <TextField
-                  error={!!errors?.descripcion}
-                  helperText={errors?.descripcion && errors?.descripcion}
-                  id="descripcion"
-                  label="Descripción"
-                  name="descripcion"
-                  value={form.descripcion}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <TextField
-                  error={!!errors?.valor}
-                  helperText={errors?.valor && errors?.valor}
-                  id="valor"
-                  label="Valor"
-                  name="valor"
-                  value={form.valor}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <TextField
-                  error={!!errors?.modulos}
-                  helperText={errors?.modulos && errors?.modulos}
-                  id="modulos"
-                  label="Modulos"
-                  name="modulos"
-                  value={form.modulos}
-                  variant="outlined"
-                  fullWidth
-                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -182,12 +255,20 @@ const SuscripcionModal = () => {
       </DialogContent>
       <DialogActions className="justify-between px-8 py-16">
         <div className="px-16">
-          <Button onClick={() => dispatch(closeDialog())} variant="contained" color="primary">
+          <Button
+            onClick={() => {
+              dispatch(closeDialog());
+              dispatch(restarInfoSuscription());
+            }}
+            variant="contained"
+            color="primary"
+          >
             Cancelar
           </Button>
         </div>
         <div className="px-16">
-          <Button onClick={handleSubmitProducts} variant="contained" color="secondary">
+          <Button onClick={handleSubmit} variant="contained" color="secondary">
+            {/* <Button onClick={handleSubmitSuscriptions} variant="contained" color="secondary"> */}
             Guardar
           </Button>
         </div>

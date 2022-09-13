@@ -258,7 +258,13 @@ function BlogTable({ blogs: dataBlogs }) {
                         color="primary"
                         onClick={() => {
                           dispatch(setInfoBlog(n));
-                          dispatch(openDialog({ title: 'Editar Blog', type: 'edit' }));
+                          dispatch(
+                            openDialog({
+                              title: 'Editar Blog',
+                              type: 'edit',
+                              modal: 'blogModalContent',
+                            })
+                          );
                         }}
                       >
                         Editar

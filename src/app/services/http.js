@@ -14,14 +14,12 @@ const get = async (url, responseType, header = {}) => {
   })
     .then((res) => {
       const { code } = res;
-      console.log('code', code);
       if (res && responseType === 'arraybuffer') {
         return res;
       }
 
       const { data } = res.data;
       if (code === 200 && data.length > 0) {
-        console.log('data http', data);
         return data;
       }
       if (code === 400 || code === 403) {

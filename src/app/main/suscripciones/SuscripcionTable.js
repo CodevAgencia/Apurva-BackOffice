@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { red } from '@mui/material/colors';
 import { withStyles } from '@mui/styles';
 import {
+  Button,
   FormControlLabel,
   FormGroup,
   Switch,
@@ -26,13 +27,16 @@ import { skyBlue } from '../../../@fuse/colors';
 import { findSuscriptionLevel, findSuscriptionType } from '../../utils/levelAndTypeSuscription';
 import { findPeriodidad } from '../../utils/perioridadSuscriptions';
 import { TruncateString } from '../../utils/TruncateString';
+import { mergeModulesNames } from '../../utils/modulesNameList';
+import { openDialog } from '../../store/fuse/dialogSlice';
+import { setInfoSuscription, updateSuscription } from '../../store/app/suscriptionSlice';
 
 const rows = [
   {
     id: 'codigo',
     align: 'left',
     disablePadding: false,
-    label: 'Codigo Suscripción',
+    label: 'Código',
     sort: true,
   },
   {
@@ -64,13 +68,6 @@ const rows = [
     sort: true,
   },
   {
-    id: 'foto',
-    align: 'center',
-    disablePadding: false,
-    label: 'Foto',
-    sort: true,
-  },
-  {
     id: 'descripcion',
     align: 'left',
     disablePadding: false,
@@ -89,6 +86,13 @@ const rows = [
     align: 'left',
     disablePadding: false,
     label: 'Módulos',
+    sort: true,
+  },
+  {
+    id: 'estados',
+    align: 'center',
+    disablePadding: false,
+    label: 'Estados',
     sort: true,
   },
   {
@@ -118,24 +122,39 @@ const CustomSwitch = withStyles({
 
 function UsuariosTable({ dataFilter }) {
   const dispatch = useDispatch();
-  const searchText = useSelector(({ users }) => users.searchText);
+  const searchTextSuscriptions = useSelector(({ suscripciones }) => suscripciones.searchText);
   const { types, levels } = useSelector(({ suscripciones }) => suscripciones);
   const [loading, setLoading] = useState(false);
+  const filterCode = useSelector(({ suscripciones }) => suscripciones.filter);
 
   const [data, setData] = useState(dataFilter);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
-    if (searchText.length !== 0) {
+    if (searchTextSuscriptions.length !== 0) {
       setData(
-        _.filter(data, (item) => item?.name?.toLowerCase().includes(searchText.toLowerCase()))
+        _.filter(dataFilter, (item) =>
+          item?.name_es?.toLowerCase().includes(searchTextSuscriptions.toLowerCase())
+        )
       );
       setPage(0);
     } else {
       setData(dataFilter);
     }
-  }, [dataFilter, searchText]);
+  }, [dataFilter, searchTextSuscriptions]);
+
+  useEffect(() => {
+    if (filterCode !== 0) {
+      // eslint-disable-next-line no-unused-expressions
+      filterCode === 1
+        ? setData(_.filter(dataFilter, (item) => item?.active === 1))
+        : setData(_.filter(dataFilter, (item) => item?.active === 0));
+      setPage(0);
+    } else {
+      setData(dataFilter);
+    }
+  }, [dataFilter, filterCode]);
 
   function handleChangePage(event, value) {
     setPage(value);
@@ -181,7 +200,12 @@ function UsuariosTable({ dataFilter }) {
                   // selected={isSelected}
                   // onClick={(event) => handleClick(n)}
                 >
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                  <TableCell
+                    className="p-4 md:p-16 truncate"
+                    align="center"
+                    component="th"
+                    scope="row"
+                  >
                     {n.id}
                   </TableCell>
 
@@ -201,18 +225,6 @@ function UsuariosTable({ dataFilter }) {
                     {findPeriodidad(n.period)}
                   </TableCell>
 
-                  <TableCell
-                    className="p-4 md:p-16 truncate"
-                    style={{ width: '7em' }}
-                    component="th"
-                    scope="row"
-                    align="center"
-                  >
-                    <div className="w-full flex justify-center rounded-full overflow-hidden">
-                      <img src={n.foto} alt="imagen" />
-                    </div>
-                  </TableCell>
-
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                     {TruncateString(n?.description_es, 25)}
                   </TableCell>
@@ -222,23 +234,25 @@ function UsuariosTable({ dataFilter }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.modulos}
+                    {mergeModulesNames(n?.modules)}
                   </TableCell>
 
                   <TableCell
                     className="p-4 md:p-16"
                     component="th"
                     scope="row"
-                    style={{ width: '2em' }}
+                    style={{ width: 'auto' }}
                   >
-                    <Tooltip title={n.status === 1 ? 'Inabilitar' : 'Habiltiar'}>
+                    <Tooltip title={n.active === 1 ? 'Inabilitar' : 'Habiltiar'}>
                       <FormGroup row>
                         <FormControlLabel
                           control={
                             <CustomSwitch
-                              checked={n.status === 1}
+                              checked={n.active === 1}
                               onChange={(event) => {
-                                console.log('evento');
+                                dispatch(
+                                  updateSuscription({ ...n, active: n.active === 1 ? 0 : 1 })
+                                );
                               }}
                               name="estado"
                             />
@@ -246,6 +260,52 @@ function UsuariosTable({ dataFilter }) {
                           label=""
                         />
                       </FormGroup>
+                    </Tooltip>
+                  </TableCell>
+
+                  <TableCell
+                    className="p-4 md:p-16 flex justify-center items-center space-x-8"
+                    component="th"
+                    scope="row"
+                    align="center"
+                  >
+                    <Tooltip title="Agregar modulo">
+                      <Button
+                        className="whitespace-no-wrap"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          // dispatch(setInfoBlog(n));
+                          dispatch(
+                            openDialog({
+                              title: 'Agregar módulo',
+                              type: 'new',
+                              modal: 'moduleModalContent',
+                            })
+                          );
+                        }}
+                      >
+                        Módulo
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="Editar Suscripción">
+                      <Button
+                        className="whitespace-no-wrap"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          dispatch(setInfoSuscription(n));
+                          dispatch(
+                            openDialog({
+                              title: 'Editar Suscripción',
+                              type: 'edit',
+                              modal: 'suscriptionModalContent',
+                            })
+                          );
+                        }}
+                      >
+                        Editar
+                      </Button>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
