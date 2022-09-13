@@ -6,6 +6,7 @@ import users from './app/usuarioSlice';
 import blogs from './app/blogSlice';
 import categories from './app/blogCategoriesSlice';
 import suscripciones from './app/suscriptionSlice';
+import modules from './app/moduleSubscriptionSlice';
 
 const createReducer = (asyncReducers) => (state, action) => {
   const combinedReducer = combineReducers({
@@ -17,6 +18,7 @@ const createReducer = (asyncReducers) => (state, action) => {
     blogs,
     categories,
     suscripciones,
+    modules,
   });
 
   /*

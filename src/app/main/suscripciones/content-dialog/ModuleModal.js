@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, DialogActions, DialogContent } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import * as React from 'react';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -12,36 +11,16 @@ import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 import { useForm } from '../../../../@fuse/hooks';
+import {
+  getModulesList,
+  saveModulesSuscriptions,
+  selectModules,
+} from '../../../store/app/moduleSubscriptionSlice';
 
 const initialData = {
-  name_en: '',
-  description_en: '',
-  name_es: '',
-  description_es: '',
-  price: '',
-  period: '',
-  active: '',
-  level_id: '',
-  type_id: '',
+  modules: '',
+  subscription_id: '',
 };
-
-const periodidadData = [
-  {
-    id: 1,
-    name: 'Mensual',
-    value: 1,
-  },
-  {
-    id: 2,
-    name: 'Trimestral',
-    value: 3,
-  },
-  {
-    id: 3,
-    name: 'Anual',
-    value: 12,
-  },
-];
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -54,19 +33,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
@@ -75,31 +41,65 @@ function getStyles(name, personName, theme) {
         : theme.typography.fontWeightMedium,
   };
 }
+// modules.module.name
+const StructureListModulesSelect = (modules) => {
+  return modules.map((module) => {
+    return module.name;
+  });
+};
 
-const SuscripcionModal = () => {
+const extractNameModulesSuscription = (modules) => {
+  return modules.map((item) => {
+    return item.module.name;
+  });
+};
+
+const ModuleModal = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const optionsDialog = useSelector(({ fuse }) => fuse.dialog.options);
-  const { types, levels } = useSelector(({ suscripciones }) => suscripciones);
-  const [nameLevel, setNameLevel] = useState('');
-  const [nameType, setNameType] = useState('');
-  const [periodSelect, setPeriodSelect] = useState([]);
-  const [personName, setPersonName] = React.useState([]);
+  const { infoModule } = useSelector(({ modules }) => modules);
+  const modulesList = useSelector(selectModules);
+  const [personName, setPersonName] = useState([]);
+  const [modulesListNames, setModulesListNames] = useState([]);
 
   const { errors, form, handleChange, handleSubmit, setErrors, setForm, setInForm } = useForm(
     initialData,
     () => handleSubmitProducts()
   );
 
+  useEffect(() => {
+    dispatch(getModulesList());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (modulesList.length > 1) {
+      setModulesListNames(StructureListModulesSelect(modulesList));
+    }
+  }, [modulesList]);
+
+  useEffect(() => {
+    if (infoModule) {
+      setPersonName(personName.concat(extractNameModulesSuscription(infoModule.modules)));
+    }
+  }, [infoModule]);
+
   const handleSubmitProducts = () => {
     if (optionsDialog?.type === 'new') {
       // GUARDAR
       // dispatch(saveProduct({ idCommerce, dataProduct: form }));
-      console.log('FORM GUARDAR', form);
+      dispatch(
+        saveModulesSuscriptions({
+          modules: modulesList,
+          data: personName,
+          idSuscription: infoModule.id,
+        })
+      );
+      console.log('FORM GUARDAR', personName);
     } else {
-      // ACTUALIZAR
+      // ELIMINAR
       // dispatch(updateProduct(form));
-      console.log('FOR ACTUALIZAR', form);
+      console.log('FOR ELIMINAR', form);
     }
     // setNameCategory('');
     // dispatch(saveUser(form));
@@ -121,31 +121,34 @@ const SuscripcionModal = () => {
         <div className="my-14">
           <form>
             <div>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
-                <Select
-                  labelId="demo-multiple-chip-label"
-                  id="demo-multiple-chip"
-                  multiple
-                  value={personName}
-                  onChange={handleChangeSelect}
-                  input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
-                  MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {modulesList.length > 1 && (
+                <FormControl sx={{ width: '100%' }}>
+                  <InputLabel id="demo-multiple-chip-label">Módulos</InputLabel>
+                  <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    name="modules"
+                    multiple
+                    value={personName}
+                    onChange={handleChangeSelect}
+                    input={<OutlinedInput id="select-multiple-chip" name="modules" label="Chip" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {modulesListNames.map((name) => (
+                      <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </div>
           </form>
         </div>
@@ -166,4 +169,4 @@ const SuscripcionModal = () => {
   );
 };
 
-export default SuscripcionModal;
+export default ModuleModal;

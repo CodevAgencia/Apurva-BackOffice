@@ -30,6 +30,7 @@ import { TruncateString } from '../../utils/TruncateString';
 import { mergeModulesNames } from '../../utils/modulesNameList';
 import { openDialog } from '../../store/fuse/dialogSlice';
 import { setInfoSuscription, updateSuscription } from '../../store/app/suscriptionSlice';
+import { setModuleInfo } from '../../store/app/moduleSubscriptionSlice';
 
 const rows = [
   {
@@ -275,7 +276,7 @@ function UsuariosTable({ dataFilter }) {
                         variant="outlined"
                         color="primary"
                         onClick={() => {
-                          // dispatch(setInfoBlog(n));
+                          dispatch(setModuleInfo(n));
                           dispatch(
                             openDialog({
                               title: 'Agregar módulo',
