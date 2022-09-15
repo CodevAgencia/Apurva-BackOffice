@@ -2,6 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/too
 import { showMessage } from '../fuse/messageSlice';
 import moduleSubscriptionService from '../../services/apiService/moduleSubscriptionService';
 import { closeDialog } from '../fuse/dialogSlice';
+import { updateSuscriptionModules } from './suscriptionSlice';
 
 export const getModulesList = createAsyncThunk(
   'modules/getModulesList',
@@ -53,19 +54,22 @@ export const saveModulesSuscriptions = createAsyncThunk(
   'modules/saveModelSuscriptions',
   async (data, { dispatch, rejectWithValue }) => {
     try {
+      const { action } = data;
       const newModule = await moduleSubscriptionService.saveModuleSubscription(data);
       dispatch(
         showMessage({
-          message: 'Modelos guardar correctamente.',
+          message: `Modelos ${action === 'new' ? 'guardados' : 'editados'} correctamente.`,
           variant: 'success',
         })
       );
       dispatch(closeDialog());
+      dispatch(updateSuscriptionModules(newModule));
       return newModule;
     } catch (error) {
+      const { action } = data;
       dispatch(
         showMessage({
-          message: 'Error al guardar el/los Modelo(s).',
+          message: `Error al ${action === 'new' ? 'guardar' : 'editar'} el/los Modelo(s).`,
           variant: 'error',
         })
       );
@@ -76,9 +80,9 @@ export const saveModulesSuscriptions = createAsyncThunk(
 
 export const deleteModulesSuscriptions = createAsyncThunk(
   'modules/deleteModulesSuscriptions',
-  async (id, { dispatch, rejectWithValue }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     try {
-      const deleteModule = await moduleSubscriptionService.deleteModelSubscription(id);
+      const deleteModule = await moduleSubscriptionService.deleteModelSubscription(data);
       dispatch(
         showMessage({
           message: 'Modelo(s) eliminado(s) correctamente.',
@@ -149,7 +153,7 @@ const modulesSlice = createSlice({
     },
     [saveModulesSuscriptions.fulfilled]: (state, action) => {
       state.loading = false;
-      modulesAdapter.addOne(state, action.payload);
+      // modulesAdapter.addOne(state, action.payload);
     },
     [saveModulesSuscriptions.rejected]: (state, action) => {
       state.loading = false;

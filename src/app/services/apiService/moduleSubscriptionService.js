@@ -20,19 +20,28 @@ const moduleSubscriptionService = {
   saveModuleSubscription: async (data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      return await moduleSubscriptionRepository.saveModuleSubscription(StructureSaveModules(data));
+      const saveData = handleSaveAction(data);
+
+      return await moduleSubscriptionRepository.saveModuleSubscription(saveData);
     } catch (error) {
       throw error;
     }
   },
-  deleteModelSubscription: async (id) => {
+  deleteModelSubscription: async (data) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      return await moduleSubscriptionRepository.deleteModuleSubscription(id);
+      return await moduleSubscriptionRepository.deleteModuleSubscription(data);
     } catch (error) {
       throw error;
     }
   },
+};
+
+const handleSaveAction = (data) => {
+  const { action } = data;
+
+  if (action === 'new') return StructureSaveModules(data);
+  return handleFilterNewModulesToSave(data);
 };
 
 const StructureSaveModules = (dataForm) => {
@@ -51,6 +60,23 @@ const FindNameToModulesList = (dataObject) => {
   });
 
   return stringIdList.join(',');
+};
+
+// suscriptionModules: LISTA DE MODULOS QUE YA TIENE LA SUSCRIPCION
+// formModulesSelected: LISTA QUE MANDA EL USUARIO DESDE EL FORMULARIO
+// return: UNA LISTA CON LOS NUEVOS MODULOS QUE SE TIENE QUE AGREGAR
+const handleFilterNewModulesToSave = (data) => {
+  const { modules, formModulesSelected, suscriptionModules, idSuscription } = data;
+
+  const newModulesToSave = formModulesSelected.filter((item) => !suscriptionModules.includes(item));
+
+  const newData = {
+    data: newModulesToSave,
+    modules,
+    idSuscription,
+  };
+
+  return StructureSaveModules(newData);
 };
 
 export default moduleSubscriptionService;

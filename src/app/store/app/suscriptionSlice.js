@@ -155,6 +155,9 @@ const suscriptionSlice = createSlice({
     setFilterStateSuscription: (state, action) => {
       state.filter = action.payload;
     },
+    updateSuscriptionModules: (state, action) => {
+      suscriptionsAdapter.upsertOne(state, action.payload);
+    },
   },
   extraReducers: {
     [getSuscriptions.pending]: (state) => {
@@ -225,6 +228,7 @@ export const {
   setFilterStateSuscription,
   setInfoSuscription,
   restarInfoSuscription,
+  updateSuscriptionModules,
 } = suscriptionSlice.actions;
 
 export default suscriptionSlice.reducer;

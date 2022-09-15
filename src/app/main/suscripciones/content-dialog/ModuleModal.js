@@ -9,6 +9,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
+import { Cancel } from '@mui/icons-material';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 import { useForm } from '../../../../@fuse/hooks';
 import {
@@ -85,7 +86,10 @@ const ModuleModal = () => {
   }, [infoModule]);
 
   const handleSubmitProducts = () => {
-    if (optionsDialog?.type === 'new') {
+    // si [infoModule?.modules.length] esta agregando nuevos modulos
+    // caso contraio la suscripcion ya tiene modulos entonces pasa a editar si
+    // da click al boton guardar
+    if (infoModule?.modules.length < 1) {
       // GUARDAR
       // dispatch(saveProduct({ idCommerce, dataProduct: form }));
       dispatch(
@@ -93,13 +97,20 @@ const ModuleModal = () => {
           modules: modulesList,
           data: personName,
           idSuscription: infoModule.id,
+          action: 'new',
         })
       );
-      console.log('FORM GUARDAR', personName);
     } else {
       // ELIMINAR
-      // dispatch(updateProduct(form));
-      console.log('FOR ELIMINAR', form);
+      dispatch(
+        saveModulesSuscriptions({
+          modules: modulesList,
+          formModulesSelected: personName,
+          suscriptionModules: extractNameModulesSuscription(infoModule?.modules),
+          idSuscription: infoModule.id,
+          action: 'edit',
+        })
+      );
     }
     // setNameCategory('');
     // dispatch(saveUser(form));
@@ -113,6 +124,14 @@ const ModuleModal = () => {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value
     );
+  };
+
+  const handleDelete = (e, value) => {
+    e.preventDefault();
+    // TODO: ELIMINAR EL MODULO DE LA SUSCRIPCIÓN BUSCANDO EL NOMBRE
+    // ACTUALIZAR LA INFO DE LA SUSCRIPCIÓN SELECCIONADA
+    // Y ACTUALIZAR LA SUSCRIPCION EN SU PROPIO STORE
+    console.log('clicked delete: ', value);
   };
 
   return (
@@ -135,7 +154,13 @@ const ModuleModal = () => {
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                          <Chip key={value} label={value} />
+                          <Chip
+                            key={value}
+                            label={value}
+                            deleteIcon={<Cancel onMouseDown={(event) => event.stopPropagation()} />}
+                            onDelete={(e) => handleDelete(e, value)}
+                            onClick={() => console.log('clicked chip')}
+                          />
                         ))}
                       </Box>
                     )}
