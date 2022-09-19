@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@mui/styles';
 import {
-  Button,
   FormControl,
   FormControlLabel,
   List,
@@ -86,14 +85,14 @@ function UsuariosSidebarContent(props) {
         {/* > */}
         {/*  Nuevo Usuario */}
         {/* </Button> */}
-        <Button
-          onClick={() => console.log('exportar')}
-          variant="outlined"
-          color="secondary"
-          className="w-full"
-        >
-          Exportar CSV
-        </Button>
+        {/* <Button */}
+        {/*  onClick={() => console.log('exportar')} */}
+        {/*  variant="outlined" */}
+        {/*  color="secondary" */}
+        {/*  className="w-full" */}
+        {/* > */}
+        {/*  Exportar CSV */}
+        {/* </Button> */}
       </div>
       <div className="px-12">
         <List>

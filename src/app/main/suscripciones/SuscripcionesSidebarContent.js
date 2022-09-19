@@ -93,14 +93,14 @@ function UsuariosSidebarContent(props) {
         >
           Nueva Suscripción
         </Button>
-        <Button
-          onClick={() => console.log('exportar')}
-          variant="outlined"
-          color="secondary"
-          className="w-full"
-        >
-          Exportar CSV
-        </Button>
+        {/* <Button */}
+        {/*  onClick={() => console.log('exportar')} */}
+        {/*  variant="outlined" */}
+        {/*  color="secondary" */}
+        {/*  className="w-full" */}
+        {/* > */}
+        {/*  Exportar CSV */}
+        {/* </Button> */}
       </div>
       <div className="px-12">
         <List>

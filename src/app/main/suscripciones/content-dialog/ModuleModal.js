@@ -10,13 +10,18 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import { Cancel } from '@mui/icons-material';
+import _ from '@lodash';
 import { closeDialog } from '../../../store/fuse/dialogSlice';
 import { useForm } from '../../../../@fuse/hooks';
 import {
+  deleteModulesSuscriptions,
   getModulesList,
+  restartModule,
   saveModulesSuscriptions,
   selectModules,
+  updateModuleInfo,
 } from '../../../store/app/moduleSubscriptionSlice';
+import { updateSuscriptionModules } from '../../../store/app/suscriptionSlice';
 
 const initialData = {
   modules: '',
@@ -37,7 +42,7 @@ const MenuProps = {
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      personName?.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -50,9 +55,32 @@ const StructureListModulesSelect = (modules) => {
 };
 
 const extractNameModulesSuscription = (modules) => {
-  return modules.map((item) => {
+  return modules?.map((item) => {
     return item.module.name;
   });
+};
+
+const extractIdToDelete = (modules, value) => {
+  const idModule = modules?.find((item) => item.module.name === value);
+  return idModule?.id;
+};
+
+const deleteModulesInModalData = (data, value) => {
+  const newData = {
+    ...data,
+    modules: filterByName(data.modules, value),
+  };
+  return newData;
+};
+
+const filterByName = (data, value) => {
+  return data.filter((item) => item.module.name !== value);
+};
+
+const updateModulesListNames = (data, infoModal) => {
+  const namesInfoModal = extractNameModulesSuscription(infoModal?.modules);
+  console.log('new data set: ', [...new Set(data.concat(namesInfoModal))]);
+  return [...new Set(data.concat(namesInfoModal))].filter((i) => i !== undefined);
 };
 
 const ModuleModal = () => {
@@ -81,7 +109,8 @@ const ModuleModal = () => {
 
   useEffect(() => {
     if (infoModule) {
-      setPersonName(personName.concat(extractNameModulesSuscription(infoModule.modules)));
+      // setPersonName(personName.concat(extractNameModulesSuscription(infoModule.modules)));
+      setPersonName(updateModulesListNames(personName, infoModule));
     }
   }, [infoModule]);
 
@@ -91,7 +120,6 @@ const ModuleModal = () => {
     // da click al boton guardar
     if (infoModule?.modules.length < 1) {
       // GUARDAR
-      // dispatch(saveProduct({ idCommerce, dataProduct: form }));
       dispatch(
         saveModulesSuscriptions({
           modules: modulesList,
@@ -101,7 +129,7 @@ const ModuleModal = () => {
         })
       );
     } else {
-      // ELIMINAR
+      // EDITAR
       dispatch(
         saveModulesSuscriptions({
           modules: modulesList,
@@ -112,18 +140,13 @@ const ModuleModal = () => {
         })
       );
     }
-    // setNameCategory('');
-    // dispatch(saveUser(form));
   };
 
   const handleChangeSelect = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value
-    );
+    setPersonName(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleDelete = (e, value) => {
@@ -131,7 +154,18 @@ const ModuleModal = () => {
     // TODO: ELIMINAR EL MODULO DE LA SUSCRIPCIÓN BUSCANDO EL NOMBRE
     // ACTUALIZAR LA INFO DE LA SUSCRIPCIÓN SELECCIONADA
     // Y ACTUALIZAR LA SUSCRIPCION EN SU PROPIO STORE
-    console.log('clicked delete: ', value);
+    const idModule = extractIdToDelete(infoModule?.modules, value);
+    dispatch(deleteModulesSuscriptions(idModule))
+      .then(() => {
+        try {
+          setPersonName((current) => _.without(current, value));
+          dispatch(updateModuleInfo(deleteModulesInModalData(infoModule, value)));
+          dispatch(updateSuscriptionModules(deleteModulesInModalData(infoModule, value)));
+        } catch (errorUpdate) {
+          console.log('error al actualizar los datos');
+        }
+      })
+      .catch(() => console.log('Error delete module.'));
   };
 
   return (
@@ -180,7 +214,14 @@ const ModuleModal = () => {
       </DialogContent>
       <DialogActions className="justify-between px-8 py-16">
         <div className="px-16">
-          <Button onClick={() => dispatch(closeDialog())} variant="contained" color="primary">
+          <Button
+            onClick={() => {
+              dispatch(closeDialog());
+              dispatch(restartModule());
+            }}
+            variant="contained"
+            color="primary"
+          >
             Cancelar
           </Button>
         </div>

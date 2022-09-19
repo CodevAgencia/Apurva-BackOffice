@@ -89,7 +89,7 @@ export const deleteModulesSuscriptions = createAsyncThunk(
           variant: 'success',
         })
       );
-      dispatch(closeDialog());
+      // dispatch(closeDialog());
       return deleteModule;
     } catch (error) {
       dispatch(
@@ -121,6 +121,9 @@ const modulesSlice = createSlice({
     },
     restartModule: (state) => {
       state.infoModule = null;
+    },
+    updateModuleInfo: (state, action) => {
+      state.infoModule = action.payload;
     },
   },
   extraReducers: {
@@ -164,7 +167,7 @@ const modulesSlice = createSlice({
     },
     [deleteModulesSuscriptions.fulfilled]: (state, action) => {
       state.loading = false;
-      modulesAdapter.removeOne(state, action.payload);
+      console.log('action.payload', action.payload);
     },
     [deleteModulesSuscriptions.rejected]: (state, action) => {
       state.loading = false;
@@ -173,6 +176,6 @@ const modulesSlice = createSlice({
   },
 });
 
-export const { setModuleInfo, restartModule } = modulesSlice.actions;
+export const { setModuleInfo, restartModule, updateModuleInfo } = modulesSlice.actions;
 
 export default modulesSlice.reducer;
