@@ -3,6 +3,7 @@ import DocumentosAdjuntosModal from '../main/usuarios/content-dialog/DocumentosA
 import ModuleModal from '../main/suscripciones/content-dialog/ModuleModal';
 import BlogModal from '../main/blog/content-dialog/BlogModal';
 import { TruncateString } from './TruncateString';
+import SuscripcionModal from '../main/suscripciones/content-dialog/SuscripcionModal';
 
 export const mergeModulesNames = (modules) => {
   if (!modules || !modules?.[0]) return 'sin modulos';
@@ -13,7 +14,7 @@ export const mergeModulesNames = (modules) => {
 
 export const SelectModalContent = {
   userModalContent: <DocumentosAdjuntosModal />,
-  suscriptionModalContent: <ModuleModal />,
+  suscriptionModalContent: <SuscripcionModal />,
   moduleModalContent: <ModuleModal />,
   blogModalContent: <BlogModal />,
 };
