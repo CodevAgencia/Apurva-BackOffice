@@ -136,7 +136,7 @@ function UsuariosTable({ dataFilter }) {
     if (searchTextSuscriptions.length !== 0) {
       setData(
         _.filter(dataFilter, (item) =>
-          item?.name_es?.toLowerCase().includes(searchTextSuscriptions.toLowerCase())
+          item?.name?.toLowerCase().includes(searchTextSuscriptions.toLowerCase())
         )
       );
       setPage(0);
@@ -211,7 +211,7 @@ function UsuariosTable({ dataFilter }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.name_es}
+                    {n.name}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
@@ -227,7 +227,7 @@ function UsuariosTable({ dataFilter }) {
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {TruncateString(n?.description_es, 25)}
+                    {TruncateString(n?.description, 25)}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">

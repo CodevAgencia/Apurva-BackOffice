@@ -3,6 +3,7 @@ import apiRequest from './apiService/apiService';
 const headers = {
   applicationJson: 'application/json',
   multipartFormData: 'multipart/form-data',
+  acceptLanguage: 'Accept-Language',
 };
 
 const get = async (url, responseType, header = {}) => {
@@ -73,6 +74,7 @@ const put = async (url, body, header) => {
     data: body,
     headers: {
       'Content-Type': header || headers.multipartFormData,
+      'Accept-Language': headers.acceptLanguage,
     },
   })
     .then((res) => {

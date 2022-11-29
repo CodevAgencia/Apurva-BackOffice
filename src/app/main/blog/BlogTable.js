@@ -218,8 +218,10 @@ function BlogTable({ blogs: dataBlogs }) {
                   >
                     <div className="w-full flex justify-center rounded-full overflow-hidden">
                       <img
-                        // src={n.image || 'assets/images/avatars/ApurvaLogo.jpg'}
-                        src="assets/images/avatars/ApurvaLogo.jpg"
+                        src={
+                          `${process.env.REACT_APP_APURVA_API}${n.image}` ||
+                          'assets/images/avatars/ApurvaLogo.jpg'
+                        }
                         alt="imagen"
                         className="object-cover"
                       />

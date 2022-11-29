@@ -4,6 +4,7 @@ export const Axios = axios.create({
   baseURL: process.env.REACT_APP_APURVA_API,
   headers: {
     Accept: 'application/json',
+    'Accept-Language': 'es',
   },
 });
 
