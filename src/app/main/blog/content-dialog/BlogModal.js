@@ -62,6 +62,9 @@ const BlogModal = () => {
       // GUARDAR
       dispatch(saveBlog(form));
     } else {
+
+      if (!form?.image || typeof form?.image == 'string')
+        delete form.image;
       // ACTUALIZAR
       // console.log('FOR ACTUALIZAR', form);
       dispatch(updateBlog(form));
