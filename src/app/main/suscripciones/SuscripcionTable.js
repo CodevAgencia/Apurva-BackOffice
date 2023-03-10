@@ -47,13 +47,13 @@ const rows = [
     label: 'Nombre',
     sort: true,
   },
-  {
+  /*{
     id: 'nivel',
     align: 'left',
     disablePadding: false,
     label: 'Nivel',
     sort: true,
-  },
+  },*/
   {
     id: 'tipo',
     align: 'left',
@@ -75,13 +75,13 @@ const rows = [
     label: 'Descripción',
     sort: true,
   },
-  {
+  /*{
     id: 'valor',
     align: 'left',
     disablePadding: false,
     label: 'Valor',
     sort: true,
-  },
+  },*/
   {
     id: 'modulo',
     align: 'left',
@@ -214,9 +214,9 @@ function UsuariosTable({ dataFilter }) {
                     {n.name}
                   </TableCell>
 
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                  {/*<TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                     {findSuscriptionLevel(n.level_id, levels)}
-                  </TableCell>
+                  </TableCell>*/}
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                     {findSuscriptionType(n.type_id, types)}
@@ -230,9 +230,9 @@ function UsuariosTable({ dataFilter }) {
                     {TruncateString(n?.description, 25)}
                   </TableCell>
 
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                  {/*<TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                     {n.price}
-                  </TableCell>
+                  </TableCell>*/}
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                     {mergeModulesNames(n?.modules)}

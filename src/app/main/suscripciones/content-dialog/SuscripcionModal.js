@@ -165,7 +165,7 @@ const SuscripcionModal = () => {
                 />
               </div>
 
-              <div>
+              {/*<div>
                 <TextField
                   error={!!errors?.price}
                   helperText={errors?.price && errors?.price}
@@ -179,7 +179,7 @@ const SuscripcionModal = () => {
                   fullWidth
                   onChange={handleChange}
                 />
-              </div>
+              </div>*/}
 
               <div className="flex flex-col w-full space-y-12">
                 <Autocomplete
@@ -204,7 +204,7 @@ const SuscripcionModal = () => {
                 />
               </div>
 
-              <div className="flex flex-col w-full space-y-12">
+              {/*<div className="flex flex-col w-full space-y-12">
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
@@ -225,7 +225,7 @@ const SuscripcionModal = () => {
                     setNameLevel(levels.find((item) => item.id === newValue?.id));
                   }}
                 />
-              </div>
+              </div>*/}
 
               <div className="flex flex-col w-full space-y-12">
                 <Autocomplete

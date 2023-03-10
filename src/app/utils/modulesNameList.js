@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
 import DocumentosAdjuntosModal from '../main/usuarios/content-dialog/DocumentosAdjuntosModal';
+import SubscriptionDialog from '../main/usuarios/content-dialog/SubscriptionDialog';
 import ModuleModal from '../main/suscripciones/content-dialog/ModuleModal';
 import BlogModal from '../main/blog/content-dialog/BlogModal';
 import { TruncateString } from './TruncateString';
@@ -13,6 +14,7 @@ export const mergeModulesNames = (modules) => {
 };
 
 export const SelectModalContent = {
+  userSubscriptionContent: <SubscriptionDialog />,
   userModalContent: <DocumentosAdjuntosModal />,
   suscriptionModalContent: <SuscripcionModal />,
   moduleModalContent: <ModuleModal />,

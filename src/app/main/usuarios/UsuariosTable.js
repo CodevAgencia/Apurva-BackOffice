@@ -12,6 +12,7 @@ import {
   FormGroup,
   Switch,
   Table,
+  Button,
   TableBody,
   TableCell,
   TablePagination,
@@ -19,8 +20,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import UsuariosTableHead from './UsuariosTableHead';
 import { skyBlue } from '../../../@fuse/colors';
+import UsuariosTableHead from './UsuariosTableHead';
+import { openDialog } from '../../store/fuse/dialogSlice';
 import { updateStateUsers } from '../../store/app/usuarioSlice';
 
 const rows = [
@@ -43,6 +45,13 @@ const rows = [
     align: 'left',
     disablePadding: false,
     label: 'Correo',
+    sort: true,
+  },
+  {
+    id: 'subscription',
+    align: 'center',
+    disablePadding: false,
+    label: 'Suscripción',
     sort: true,
   },
   {
@@ -174,6 +183,34 @@ function UsuariosTable({ users: dataUsers }) {
                   </TableCell>
 
                   <TableCell
+                    className="p-4 md:p-16 truncate"
+                    component="th"
+                    scope="row"
+                    align="center"
+                  >
+                    <Tooltip title="Ver suscripción">
+                      <Button
+                        className="whitespace-no-wrap"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          //dispatch(setModuleInfo(n));
+                          dispatch(
+                            openDialog({
+                              title: 'Suscripción activa',
+                              type: 'new',
+                              modal: 'userSubscriptionContent',
+                              data: n
+                            })
+                          );
+                        }}
+                      >
+                        Suscripción
+                      </Button>
+                    </Tooltip>
+                  </TableCell>
+
+                  <TableCell
                     className="p-4 md:p-16"
                     component="th"
                     scope="row"
@@ -196,6 +233,7 @@ function UsuariosTable({ users: dataUsers }) {
                       </FormGroup>
                     </Tooltip>
                   </TableCell>
+
                 </TableRow>
               );
             })}
