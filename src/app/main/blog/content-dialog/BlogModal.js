@@ -43,9 +43,13 @@ const BlogModal = () => {
 
   useEffect(() => {
     dispatch(getBlogsCategories()).then((res) => {
-      const firtsCategory = res.payload[0];
-      setInForm('knowledge_category_id', firtsCategory.id);
-      setNameCategory(firtsCategory);
+      if (optionsDialog.type === 'new') {
+        const firtsCategory = res.payload[0];
+        setInForm('knowledge_category_id', firtsCategory.id);
+        setNameCategory(firtsCategory);
+      } else if (optionsDialog.type == 'edit') {
+        setNameCategory(editBlogData?.category);
+      }
     });
   }, [dispatch]);
 

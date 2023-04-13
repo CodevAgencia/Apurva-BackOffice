@@ -3,7 +3,7 @@ import apiRequest from './apiService/apiService';
 const headers = {
   applicationJson: 'application/json',
   multipartFormData: 'multipart/form-data',
-  acceptLanguage: 'Accept-Language',
+  acceptLanguage: 'es',
 };
 
 const get = async (url, responseType, header = {}) => {
