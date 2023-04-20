@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@mui/styles';
 import {
+  Button,
   FormControl,
   FormControlLabel,
   List,
@@ -75,6 +76,17 @@ function UsuariosSidebarContent(props) {
       className="flex-auto border-l-1 border-solid"
     >
       <div className="p-24 pb-16 space-y-8">
+        <Button
+          onClick={() => {
+            const url = `${process.env.REACT_APP_APURVA_API}/api/v1/export/users?token=${localStorage.getItem("@apurva_admin:access_token")}`; 
+            window.open(url, '_blank');
+          }}
+          variant="contained"
+          color="secondary"
+          className="w-full"
+        >
+          Descargar Excel
+        </Button>
         {/* <Button */}
         {/*  onClick={() => */}
         {/*    dispatch(openDialog({ title: 'Nuevo Usuraio', type: 'new', modal: 'userModalContent' })) */}
