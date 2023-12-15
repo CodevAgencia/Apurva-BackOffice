@@ -67,9 +67,9 @@ const post = async (url, body, header) => {
     });
 };
 
-const put = async (url, body, header) => {
+const put = async (url, body, header, method = "POST") => {
   return apiRequest({
-    method: 'POST',
+    method,
     url,
     data: body,
     headers: {

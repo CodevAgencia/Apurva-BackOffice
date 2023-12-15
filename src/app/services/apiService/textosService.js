@@ -9,9 +9,9 @@ const textosService = {
       throw error;
     }
   },
-  updateText: async (id) => {
+  updateText: async (data) => {
     try {
-      const updateText = await textosRepository.updateText(id);
+      const updateText = await textosRepository.updateText(data);
       return updateTextModel(updateText);
     } catch (error) {
       throw error;

@@ -38,9 +38,14 @@ export const updateText = createAsyncThunk(
       );
       return updateData;
     } catch (error) {
+      let message = 'Error al actualizar los textos.';
+      if (error?.en_text?.length > 0)
+        message = error.en_text[0];
+      else if (error?.es_text?.length > 0)
+        message = error.es_text[0];
       dispatch(
         showMessage({
-          message: 'Error al actualizar los textos.',
+          message,
           variant: 'error',
         })
       );

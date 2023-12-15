@@ -11,10 +11,11 @@ const textosRepository = {
       throw error;
     }
   },
-  updateText: async (id) => {
+  updateText: async (data) => {
     try {
-      return await http.get(`${updateUrl}/${id}`);
+      return await http.put(`${updateUrl}/${data?.id}`, data, "application/json", "PUT");
     } catch (error) {
+      console.log("update error: ", error);
       throw error;
     }
   },
