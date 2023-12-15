@@ -43,6 +43,15 @@ const navigationConfig = [
         url: '/subscription',
         auth: authRoles.admin,
       },
+      {
+        id: 'text-module-component',
+        title: 'Textos',
+        translate: 'Textos',
+        type: 'item',
+        icon: 'note',
+        url: '/textos',
+        auth: authRoles.admin,
+      },
     ],
   },
 ];

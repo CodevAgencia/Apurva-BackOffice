@@ -4,6 +4,7 @@ import fuse from './fuse';
 import i18n from './i18nSlice';
 import users from './app/usuarioSlice';
 import blogs from './app/blogSlice';
+import texts from './app/textosSlice';
 import categories from './app/blogCategoriesSlice';
 import suscripciones from './app/suscriptionSlice';
 import modules from './app/moduleSubscriptionSlice';
@@ -16,6 +17,7 @@ const createReducer = (asyncReducers) => (state, action) => {
     ...asyncReducers,
     users,
     blogs,
+    texts,
     categories,
     suscripciones,
     modules,
