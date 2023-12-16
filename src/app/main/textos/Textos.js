@@ -11,19 +11,59 @@ function Textos(props) {
   const routeParams = useParams();
   const editorEnRef = useRef(null);
   const editorEsRef = useRef(null);
+  const [size, setSize] = useState(15);
   const [index, setIndex] = useState(0);
   const texts = useSelector(selectTexts);
+  const [sizes, setSizes] = useState([]);
+  const [node, setNode] = useState(null);
+  const [range, setRange] = useState(null);
+  const [parent, setParent] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     dispatch(getTexts()).then(e => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    let data = [];
+    for (let i = 1; i <= 40; i++) {
+      data.push(i);
+    }
+    setSizes(data);
+  }, []);
+
   useDeepCompareEffect(() => {
     // dispatch(getTodos(routeParams));
   }, [dispatch, routeParams]);
 
-  function replaceSelectedText(tag = null) {
+  function replaceSelectedText(tag = null, fontSize = '') {
+    if (node) {
+      if (tag == "size") {
+        node.style.fontSize = `${fontSize}px`;
+      }
+      else if (tag == 'bold') {
+        node.style.fontWeight = "bold";
+      }
+      else if (!tag) {
+        node.style.fontWeight = "normal";
+      }
+  
+      range.deleteContents();
+      range.insertNode(node);
+    } else if (parent) {
+      if (tag == "size") {
+        parent.style.fontSize = `${fontSize}px`;
+      }
+      else if (tag == 'bold') {
+        parent.style.fontWeight = "bold";
+      }
+      else if (!tag) {
+        parent.style.fontWeight = "normal";
+      }
+    }
+  }
+
+  const getRange = () => {
     let sel, range, element, text;
     if (window.getSelection) {
         sel = window.getSelection();
@@ -31,31 +71,19 @@ function Textos(props) {
             range = sel.getRangeAt(0);
             text = document.createTextNode(range.toString());
             let parent = range.commonAncestorContainer.parentNode;
+
+            element = document.createElement("span");
+            element.appendChild(text);
+            setRange(range);
             
-            if (tag == 'h1') {
-              element = document.createElement("h1");
-              element.appendChild(text);
-              element.classList.add("text-title");
-              //element = new DOMParser().parseFromString(openLabel + range.toString() + closeLabel, "text/xml");
-            } else if (tag == 'strong') {
-              element = document.createElement("strong");
-              element.appendChild(text);
-              element.classList.add("text-bold");
+            if (parent.tagName.toLowerCase() == "span") {
+              setNode(null);
+              setParent(parent);
+            } else {
+              setParent(null);
+              setNode(element);
             }
-
-            if (parent.tagName.toLowerCase() == "h1" || parent.tagName.toLowerCase() == "strong")
-              parent.remove();
-
-            range.deleteContents();
-            
-            if (tag)
-              range.insertNode(element/*element.firstChild*/);
-            else
-              range.insertNode(text);
         }
-    } else if (document.selection && document.selection.createRange) {
-        range = document.selection.createRange();
-        range.innerHTML = replacementText;
     }
   }
 
@@ -83,9 +111,17 @@ function Textos(props) {
           <div class="editor-header">
             <h1 class="editor-title">Ingles</h1>
             <div class="header-container-button">
-              <button class="item" onClick={() => replaceSelectedText("strong")}>Negrita</button>
-              <button class="item" onClick={() => replaceSelectedText("h1")}>Título</button>
+              <button class="item" onClick={() => replaceSelectedText("bold")}>Negrita</button>
               <button class="item" onClick={() => replaceSelectedText()}>Normal</button>
+              <select class="select-font-size" onChange={e => {
+                replaceSelectedText("size", e.target?.value);
+              }}>
+                {sizes.map(value => {
+                  return (
+                    <option value={value}>{value}</option>
+                  );
+                })}
+              </select>
             </div>
           </div>
 
@@ -107,6 +143,9 @@ function Textos(props) {
             class="editor-body" 
             id="apurva-editor-en" 
             contentEditable={true} 
+            onMouseUp={e => {
+              getRange();
+            }}
             dangerouslySetInnerHTML={{__html: texts.length > 0 ? texts[index]?.en_text : ''}}
           >
           </div>
@@ -116,9 +155,17 @@ function Textos(props) {
           <div class="editor-header">
             <h1 class="editor-title">Español</h1>
             <div class="header-container-button">
-              <button class="item" onClick={() => replaceSelectedText("strong")}>Negrita</button>
-              <button class="item" onClick={() => replaceSelectedText("h1")}>Título</button>
+              <button class="item" onClick={() => replaceSelectedText("bold")}>Negrita</button>
               <button class="item" onClick={() => replaceSelectedText()}>Normal</button>
+              <select class="select-font-size" onChange={e => {
+                replaceSelectedText("size", e.target?.value);
+              }}>
+                {sizes.map(value => {
+                  return (
+                    <option value={value}>{value}</option>
+                  );
+                })}
+              </select>
             </div>
           </div>
 
@@ -129,6 +176,9 @@ function Textos(props) {
             class="editor-body" 
             id="apurva-editor-es"
             contentEditable={true}
+            onMouseUp={e => {
+              getRange();
+            }}
             dangerouslySetInnerHTML={{__html: texts.length > 0 ? texts[index]?.es_text : ''}}
           >
           </div>
