@@ -11,7 +11,8 @@ function Textos(props) {
   const routeParams = useParams();
   const editorEnRef = useRef(null);
   const editorEsRef = useRef(null);
-  const [size, setSize] = useState(15);
+  const firstSelectRef = useRef(null);
+  const secondSelectRef = useRef(null);
   const [index, setIndex] = useState(0);
   const texts = useSelector(selectTexts);
   const [sizes, setSizes] = useState([]);
@@ -42,9 +43,11 @@ function Textos(props) {
         node.style.fontSize = `${fontSize}px`;
       }
       else if (tag == 'bold') {
+        node.style.color = "white";
         node.style.fontWeight = "bold";
       }
       else if (!tag) {
+        node.style.color = "#DCDCDC";
         node.style.fontWeight = "normal";
       }
   
@@ -55,15 +58,17 @@ function Textos(props) {
         parent.style.fontSize = `${fontSize}px`;
       }
       else if (tag == 'bold') {
+        parent.style.color = "white";
         parent.style.fontWeight = "bold";
       }
       else if (!tag) {
+        parent.style.color = "#DCDCDC";
         parent.style.fontWeight = "normal";
       }
     }
   }
 
-  const getRange = () => {
+  const getRange = (selectRef) => {
     let sel, range, element, text;
     if (window.getSelection) {
         sel = window.getSelection();
@@ -79,9 +84,11 @@ function Textos(props) {
             if (parent.tagName.toLowerCase() == "span") {
               setNode(null);
               setParent(parent);
+              selectRef.current.value = parent.style?.fontSize?.replaceAll("px", "") || "15";
             } else {
               setParent(null);
               setNode(element);
+              selectRef.current.value = element.style?.fontSize.replaceAll("px", "") || "15";
             }
         }
     }
@@ -113,7 +120,7 @@ function Textos(props) {
             <div class="header-container-button">
               <button class="item" onClick={() => replaceSelectedText("bold")}>Negrita</button>
               <button class="item" onClick={() => replaceSelectedText()}>Normal</button>
-              <select class="select-font-size" onChange={e => {
+              <select ref={firstSelectRef} class="select-font-size" onChange={e => {
                 replaceSelectedText("size", e.target?.value);
               }}>
                 {sizes.map(value => {
@@ -144,7 +151,7 @@ function Textos(props) {
             id="apurva-editor-en" 
             contentEditable={true} 
             onMouseUp={e => {
-              getRange();
+              getRange(firstSelectRef);
             }}
             dangerouslySetInnerHTML={{__html: texts.length > 0 ? texts[index]?.en_text : ''}}
           >
@@ -157,7 +164,7 @@ function Textos(props) {
             <div class="header-container-button">
               <button class="item" onClick={() => replaceSelectedText("bold")}>Negrita</button>
               <button class="item" onClick={() => replaceSelectedText()}>Normal</button>
-              <select class="select-font-size" onChange={e => {
+              <select ref={secondSelectRef} class="select-font-size" onChange={e => {
                 replaceSelectedText("size", e.target?.value);
               }}>
                 {sizes.map(value => {
@@ -177,7 +184,7 @@ function Textos(props) {
             id="apurva-editor-es"
             contentEditable={true}
             onMouseUp={e => {
-              getRange();
+              getRange(secondSelectRef);
             }}
             dangerouslySetInnerHTML={{__html: texts.length > 0 ? texts[index]?.es_text : ''}}
           >
