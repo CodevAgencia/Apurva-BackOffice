@@ -76,12 +76,13 @@ function Textos(props) {
             range = sel.getRangeAt(0);
             text = document.createTextNode(range.toString());
             let parent = range.commonAncestorContainer.parentNode;
+            const hasParent = parent?.tagName?.toLowerCase() == "span";
 
             element = document.createElement("span");
             element.appendChild(text);
             setRange(range);
             
-            if (parent.tagName.toLowerCase() == "span") {
+            /*if (hasParent) {
               setNode(null);
               setParent(parent);
               selectRef.current.value = parent.style?.fontSize?.replaceAll("px", "") || "15";
@@ -89,7 +90,12 @@ function Textos(props) {
               setParent(null);
               setNode(element);
               selectRef.current.value = element.style?.fontSize.replaceAll("px", "") || "15";
-            }
+            }*/
+
+            setParent(null);
+            setNode(element);
+            let styles = window.getComputedStyle(parent); //obtenemos todos los estilos del elemento incluyendo lo heredados pos sus antecesores
+            selectRef.current.value = styles?.fontSize?.replaceAll("px", "") || "15";
         }
     }
   }
